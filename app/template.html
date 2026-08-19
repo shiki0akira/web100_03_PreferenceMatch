@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+  </head>
+
+  <body>
+    {{header}}
+
+    <main id="main">
+      <!-- 首頁：建立房間 / 加入房間 -->
+      <section class="view" id="view-home">
+        <div class="hero">
+          <h1>{{heroTitle}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="two-col">
+          <section class="surface">
+            <h2>{{createHeading}}</h2>
+            <!-- 首頁只負責開房與加入，跟搶答遊戲一致。
+                 題目與其他設定都在開好房之後、大廳裡才設定 -->
+            <label class="field-label" for="max-players">{{maxPlayersLabel}}</label>
+            <input
+              class="field"
+              id="max-players"
+              type="number"
+              inputmode="numeric"
+              min="2"
+              max="30"
+              step="1"
+              value="10"
+            />
+            <p class="hint">{{maxPlayersHint}}</p>
+            <button class="btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
+            <p class="form-error" id="create-error" role="alert" hidden></p>
+          </section>
+
+          <section class="surface">
+            <h2>{{joinHeading}}</h2>
+            <label class="field-label" for="join-code">{{codeLabel}}</label>
+            <input
+              class="field field-code"
+              id="join-code"
+              type="text"
+              inputmode="latin"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              maxlength="4"
+              placeholder="{{codePlaceholder}}"
+            />
+            <button class="btn-outline btn-block" id="join-room" type="button">{{joinButton}}</button>
+            <p class="form-error" id="join-error" role="alert" hidden></p>
+          </section>
+        </div>
+
+        <p class="rules-link"><a href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </section>
+
+      <!-- 加入房間：填暱稱 -->
+      <section class="view" id="view-join" hidden>
+        <section class="surface narrow">
+          <h1 class="join-title" id="join-title">{{joinTitle}}</h1>
+
+          <!-- 10 個固定頭像，不開放上傳。按鈕由 app.js 依 window.AVATARS 產生 -->
+          <span class="field-label">{{avatarLabel}}</span>
+          <div class="avatar-picker" id="avatar-picker" role="radiogroup" aria-label="{{avatarLabel}}"></div>
+
+          <label class="field-label" for="nickname">{{nicknameLabel}}</label>
+          <input
+            class="field"
+            id="nickname"
+            type="text"
+            autocomplete="nickname"
+            maxlength="16"
+            placeholder="{{nicknamePlaceholder}}"
+          />
+          <button class="btn-solid btn-block" id="enter-room" type="button">{{enterButton}}</button>
+          <p class="form-error" id="nickname-error" role="alert" hidden></p>
+        </section>
+      </section>
+
+      <!-- 房間內。主持人與玩家共用同一個畫面骨架：主持人預設只控場，但可以在大廳打開
+           「我也要一起作答」下場，做成兩套版面會讓那個開關處處要判斷兩次 -->
+      <section class="view" id="view-room" hidden>
+        <div class="room-bar">
+          <span class="role-badge" id="role-badge"></span>
+          <button class="btn-outline btn-danger" id="exit-room" type="button"></button>
+        </div>
+
+        <!-- 等待大廳 -->
+        <section class="surface share" id="share-card">
+          <div class="share-code">
+            <span class="field-label">{{roomCodeLabel}}</span>
+            <strong class="room-code" id="room-code">····</strong>
+            <p class="hint">{{shareHint}}</p>
+            <button class="btn-outline" id="copy-link" type="button">{{copyLink}}</button>
+            <p class="share-url" id="share-url"></p>
+          </div>
+          <div class="qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+        </section>
+
+        <!-- 選題與其他設定：只有主持人看得到，只有大廳階段能改 -->
+        <section class="surface" id="setup-card" hidden>
+          <div class="section-head">
+            <h2>{{questionsLabel}}</h2>
+            <span class="counter" id="selected-count"></span>
+          </div>
+          <!-- 分類用原生 <details>：展開收合不用寫 JS，手機上也不會一次列 35 題 -->
+          <div id="category-list"></div>
+
+          <label class="field-label" for="custom-input">{{customLabel}}</label>
+          <div class="row">
+            <input
+              class="field"
+              id="custom-input"
+              type="text"
+              maxlength="120"
+              autocomplete="off"
+              placeholder="{{customPlaceholder}}"
+            />
+            <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+          </div>
+          <ul class="custom-list" id="custom-list"></ul>
+          <p class="hint">{{questionsHint}}</p>
+
+          <details class="advanced">
+            <summary>{{advancedSummary}}</summary>
+
+            <label class="field-label" for="group-size">{{groupSizeLabel}}</label>
+            <input
+              class="field"
+              id="group-size"
+              type="number"
+              inputmode="numeric"
+              min="3"
+              max="5"
+              step="1"
+              value="4"
+            />
+            <p class="hint">{{groupSizeHint}}</p>
+
+            <label class="check-row">
+              <input type="checkbox" id="host-plays" />
+              <span>{{hostPlaysLabel}}</span>
+            </label>
+            <p class="hint">{{hostPlaysHint}}</p>
+          </details>
+        </section>
+
+        <section class="surface" id="lobby-card">
+          <div class="section-head">
+            <h2>{{playersHeading}}</h2>
+            <span class="counter" id="player-count"></span>
+          </div>
+          <ul class="player-list" id="player-list"></ul>
+          <p class="empty" id="player-empty">{{emptyPlayers}}</p>
+
+          <div id="start-game-block" hidden>
+            <button class="btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
+            <p class="hint" id="start-game-hint">{{startGameHint}}</p>
+            <p class="form-error" id="start-game-error" role="alert" hidden></p>
+          </div>
+          <p class="hint" id="waiting-hint">{{waitingHint}}</p>
+        </section>
+
+        <!-- 作答中 / 統計 -->
+        <section class="surface question-card" id="question-card" hidden>
+          <div class="section-head">
+            <span class="field-label" id="question-progress"></span>
+            <span class="countdown" id="countdown" role="timer"></span>
+          </div>
+          <div class="timer-track"><div class="timer-fill" id="timer-fill"></div></div>
+
+          <p class="question-text" id="question-text"></p>
+
+          <div class="ox-buttons" id="ox-buttons">
+            <button class="ox-button ox-o" id="answer-o" type="button">
+              <span class="ox-mark">◯</span>
+              <span class="ox-word">{{agreeLabel}}</span>
+            </button>
+            <button class="ox-button ox-x" id="answer-x" type="button">
+              <span class="ox-mark">✕</span>
+              <span class="ox-word">{{disagreeLabel}}</span>
+            </button>
+          </div>
+          <p class="hint" id="answer-hint"></p>
+
+          <!-- 時間到之後才出現的統計。沒有匿名模式，直接把人列出來 -->
+          <div class="tally" id="tally" hidden>
+            <div class="tally-side">
+              <div class="tally-head"><span class="ox-mark">◯</span><span id="tally-o-count"></span></div>
+              <ul class="chip-list" id="tally-o-list"></ul>
+            </div>
+            <div class="tally-side">
+              <div class="tally-head"><span class="ox-mark">✕</span><span id="tally-x-count"></span></div>
+              <ul class="chip-list" id="tally-x-list"></ul>
+            </div>
+          </div>
+
+          <button class="btn-solid btn-block" id="next-question" type="button" hidden></button>
+        </section>
+
+        <!-- 分組結果 -->
+        <section class="results" id="results-card" hidden>
+          <div class="surface" id="my-group-card">
+            <h2>{{myGroupHeading}}</h2>
+            <ul class="chip-list chip-list-big" id="my-group-members"></ul>
+            <h3 class="topics-heading">{{topicsHeading}}</h3>
+            <ul class="topic-list" id="my-group-topics"></ul>
+            <p class="empty" id="my-group-empty">{{noTopics}}</p>
+          </div>
+
+          <div class="surface">
+            <div class="section-head">
+              <h2 id="all-groups-heading">{{allGroupsHeading}}</h2>
+            </div>
+            <div id="all-groups"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- 連不上 / 房間有問題 -->
+      <section class="view" id="view-error" hidden>
+        <section class="surface narrow center">
+          <h1 id="error-title">{{errorTitle}}</h1>
+          <p id="error-desc">{{errorDesc}}</p>
+          <a class="btn-solid" href="{{base}}/{{lang}}/">{{backHome}}</a>
+        </section>
+      </section>
+    </main>
+
+    <div class="conn-banner" id="conn-banner" role="status" hidden></div>
+
+    <!-- 離開／關閉房間的確認。用原生 <dialog>：焦點鎖定、Esc 關閉都不用自己寫，
+         Esc 等同「取消」，正好是這裡想要的行為 -->
+    <dialog class="modal" id="confirm-dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-desc"></p>
+      <div class="modal-actions">
+        <button class="btn-outline" id="confirm-cancel" type="button">{{cancelButton}}</button>
+        <button class="btn-solid" id="confirm-ok" type="button"></button>
+      </div>
+    </dialog>
+
+    <!-- 主持人關掉房間時，玩家看到的通知。只有一顆按鈕，按了回首頁 -->
+    <dialog class="modal" id="closed-dialog">
+      <h2>{{roomClosedTitle}}</h2>
+      <p>{{roomClosedDesc}}</p>
+      <div class="modal-actions">
+        <button class="btn-solid" id="closed-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    <!-- 被主持人移出房間時看到的通知 -->
+    <dialog class="modal" id="kicked-dialog">
+      <h2>{{kickedTitle}}</h2>
+      <p>{{kickedDesc}}</p>
+      <div class="modal-actions">
+        <button class="btn-solid" id="kicked-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script src="{{base}}/vendor/qrcode.js"></script>
+    <script>
+      window.T = {{stringsJson}};
+      window.QUESTIONS = {{questionsJson}};
+      window.AVATARS = {{avatarsJson}};
+      window.MATCH = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        page: '',
+        siteOrigin: '{{siteOrigin}}',
+        workerOrigin: '{{workerOrigin}}',
+      };
+    </script>
+    <script src="{{base}}/header.js"></script>
+    <script src="{{base}}/app.js"></script>
+  </body>
+</html>
