@@ -31,6 +31,19 @@
   }
 
   var langSwitch = document.getElementById('lang-switch');
+
+  /*
+   * 每個語言是一份獨立的靜態頁，下拉的 selected 是 build 時就寫死的。但瀏覽器在
+   * 上一頁／下一頁（含 bfcache）時會**還原表單控制項的值**，於是會出現：
+   * 在英文頁把下拉切到繁體中文 → 跳到中文頁 → 按上一頁回英文頁，
+   * 內容是英文、下拉卻還顯示「繁體中文」。
+   *
+   * pageshow 在正常載入與 bfcache 還原時都會觸發，一律把下拉拉回這份文件真正的語言。
+   */
+  window.addEventListener('pageshow', function () {
+    if (langSwitch) langSwitch.value = LANG;
+  });
+
   if (langSwitch) {
     langSwitch.addEventListener('change', function () {
       var next = this.value;

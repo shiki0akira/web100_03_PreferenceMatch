@@ -52,6 +52,8 @@ html.light {
   --ox-x-face: var(--secondary-500);
   --ox-x-edge: var(--secondary-600);
   --ox-x-text: var(--secondary-900);
+  --ox-o-mark: var(--primary-700);
+  --ox-x-mark: var(--secondary-700);
 
   color-scheme: light;
 }
@@ -72,6 +74,8 @@ html.light {
   --ox-x-face: var(--secondary-800);
   --ox-x-edge: var(--secondary-900);
   --ox-x-text: #ffffff;
+  --ox-o-mark: var(--primary-400);
+  --ox-x-mark: var(--secondary-500);
 
   color-scheme: dark;
 }
@@ -924,6 +928,17 @@ textarea.field {
   cursor: pointer;
 }
 
+/* 原本是瀏覽器預設的 13px，手指點不到。放大到 18px 並染上強調色 */
+.check-row input[type='checkbox'],
+.cat-all input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex: none;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
 /* 分類之間的間距交給 #category-list 的 gap，不要用 margin-top——
    margin 會讓左欄的第一張卡比右欄低一截，兩邊就對不齊了 */
 #category-list {
@@ -935,7 +950,8 @@ textarea.field {
 .cat {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 0.5rem 0.75rem;
+  /* hover 底色要被圓角切齊，不然四個角會露出方角 */
+  overflow: hidden;
 }
 
 .cat > summary {
@@ -976,15 +992,23 @@ textarea.field {
 
 .q-list {
   list-style: none;
-  margin: var(--space-1) 0 0;
-  padding: 0;
+  /* 上面不要再加 margin（原本跟 summary 之間空一大塊），
+     下面補 padding（原本最後一題貼著卡片邊緣） */
+  margin: 0;
+  padding: 0 0.75rem 0.6rem;
+}
+
+/* 左右兩欄的題目字級要一致，15px 是量過在兩欄都不會被擠斷行的大小 */
+.q-list li,
+.chosen-list li {
+  font-size: 15px;
 }
 
 .q-list li {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.35rem 0;
+  padding: 0.3rem 0;
 }
 
 .q-list label {
@@ -1108,13 +1132,32 @@ textarea.field {
   color: var(--ox-x-text);
 }
 
-/* 沒選中時也讓兩顆有顏色差異，不然要按下去才知道哪顆是哪個意思 */
+/*
+ * 沒選中時也要一眼分得出兩顆——只有邊框變色太細，遠看根本一樣。
+ * 底色用 color-mix 調成 14% 的淡色，夠明顯但又不會跟「已選中」的實心混淆；
+ * ◯／✕ 符號本身也上色，那是視線第一個落點。
+ */
 .ox-o {
   border-color: var(--ox-o-edge);
+  background: color-mix(in srgb, var(--ox-o-face) 14%, transparent);
 }
 
 .ox-x {
   border-color: var(--ox-x-edge);
+  background: color-mix(in srgb, var(--ox-x-face) 14%, transparent);
+}
+
+.ox-o .ox-mark {
+  color: var(--ox-o-mark);
+}
+
+.ox-x .ox-mark {
+  color: var(--ox-x-mark);
+}
+
+/* 選中之後整顆填滿，符號回到跟文字同色 */
+.ox-button.chosen .ox-mark {
+  color: inherit;
 }
 
 /* ---------- 統計 ---------- */
@@ -1287,6 +1330,10 @@ textarea.field {
 
 /* 左邊挑題（很長）、右邊看已選的（短）。右欄黏在視線內，
    捲到第七個分類時還看得到自己出了哪幾題 */
+#view-setup .section-head {
+  margin-bottom: 12px;
+}
+
 .setup-cols {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -1307,7 +1354,7 @@ textarea.field {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-1);
-  margin-bottom: var(--space-1);
+  margin-bottom: 8px;
 }
 
 .chosen-heading {
@@ -1335,7 +1382,7 @@ textarea.field {
   flex-direction: column;
   gap: 0.35rem;
   /* 20 題上限，太長就自己捲，不要把整張卡片撐開 */
-  max-height: 26rem;
+  max-height: 34rem;
   overflow-y: auto;
 }
 
@@ -1343,10 +1390,9 @@ textarea.field {
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
-  padding: 0.35rem 0.5rem;
+  padding: 0.4rem 0.5rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  font-size: 0.85rem;
 }
 
 /* 自訂題標一個左邊條，跟題庫來的區分開 */
@@ -1378,8 +1424,8 @@ textarea.field {
 .cat > summary {
   /* 原生的三角形跟自己畫的箭頭會重複 */
   list-style: none;
-  padding: 0.35rem 0.25rem;
-  border-radius: var(--radius);
+  /* padding 給 summary 而不是 .cat：hover 底色才會鋪滿整條標題列 */
+  padding: 0.6rem 0.75rem;
   transition: background 0.12s ease;
 }
 
@@ -1495,4 +1541,56 @@ textarea.field {
 /* 「開始遊戲」與「改題目」之間留一段距離，不要黏在一起變成一大塊 */
 #start-game-block .btn-block + .btn-block {
   margin-top: 12px;
+}
+
+
+/* ---------- 一排單選（每題幾秒） ---------- */
+
+/*
+ * 五個選項排成一排，比下拉少一次點擊、也一眼看得到全部選項。
+ * 底層還是 <input type="radio">，鍵盤方向鍵與螢幕閱讀器都照舊，只是把圓點藏起來。
+ */
+.seg {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
+}
+
+.seg-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border: 1.5px solid var(--color-outline);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+/* 圓點藏起來但保留在無障礙樹裡（不能用 display:none，那樣鍵盤就選不到） */
+.seg-item input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.seg-item:hover {
+  border-color: var(--color-outline-hover);
+}
+
+.seg-item:has(input:checked) {
+  background: var(--btn-face);
+  border-color: var(--btn-edge);
+  color: var(--btn-text);
+  font-weight: 700;
+}
+
+.seg-item:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }

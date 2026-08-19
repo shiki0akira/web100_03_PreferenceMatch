@@ -13,9 +13,9 @@ export default {
   langSwitchLabel: 'Change language',
   themeToggleLabel: 'Toggle light and dark',
 
-  heroTitle: 'Ten questions to find the people most like you',
+  heroTitle: 'A handful of questions to find who is most like you',
   heroDesc:
-    'Ten seconds a question — agree or disagree. When everyone is done, the room is split into groups, with the topics each group can talk about.',
+    'Each question is timed — agree or disagree. When everyone is done, the room is split into groups, with the topics each group can talk about.',
 
   createHeading: 'Open a room',
   questionsLabel: 'Questions',
@@ -47,6 +47,8 @@ export default {
   maxPlayersHint: '2–30 players, not counting the host',
   groupSizeLabel: 'People per group',
   groupSizeHint: '3 to 5. Under 6 players the room is not split — you get pair matches instead.',
+  secondsLabel: 'Seconds per question',
+  secondsHint: '10 works for most rooms. Pick 12 or 15 for longer questions, 5 or 8 to keep it brisk.',
   hostPlaysLabel: 'Host answers too',
   hostPlaysHint: 'Turn this off to run the room only and stay out of the grouping.',
   createButton: 'Create room',

@@ -122,6 +122,17 @@
           />
           <p class="hint">{{groupSizeHint}}</p>
 
+          <span class="field-label">{{secondsLabel}}</span>
+          <!-- 五個選項排成一排的單選，比下拉少一次點擊，也一眼看得到全部選項 -->
+          <div class="seg" id="question-seconds" role="radiogroup" aria-label="{{secondsLabel}}">
+            <label class="seg-item"><input type="radio" name="question-seconds" value="5" /><span>5</span></label>
+            <label class="seg-item"><input type="radio" name="question-seconds" value="8" /><span>8</span></label>
+            <label class="seg-item"><input type="radio" name="question-seconds" value="10" checked /><span>10</span></label>
+            <label class="seg-item"><input type="radio" name="question-seconds" value="12" /><span>12</span></label>
+            <label class="seg-item"><input type="radio" name="question-seconds" value="15" /><span>15</span></label>
+          </div>
+          <p class="hint">{{secondsHint}}</p>
+
           <!-- switch：開關類的設定用打勾框看起來像待辦事項，
                switch 才讀得出來是開著還關著 -->
           <label class="switch-row">
@@ -312,7 +323,7 @@
         workerOrigin: '{{workerOrigin}}',
       };
     </script>
-    <script src="{{base}}/header.js"></script>
-    <script src="{{base}}/app.js"></script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
   </body>
 </html>

@@ -13,9 +13,9 @@ export default {
   langSwitchLabel: 'Cambiar de idioma',
   themeToggleLabel: 'Cambiar entre claro y oscuro',
 
-  heroTitle: 'Diez preguntas para encontrar a quien más se te parece',
+  heroTitle: 'Unas cuantas preguntas para encontrar a quien más se te parece',
   heroDesc:
-    'Diez segundos por pregunta: de acuerdo o en desacuerdo. Al final se forman los grupos solos, con los temas de los que podéis hablar.',
+    'Cada pregunta va con tiempo: de acuerdo o en desacuerdo. Al final se forman los grupos solos, con los temas de los que podéis hablar.',
 
   createHeading: 'Abrir una sala',
   questionsLabel: 'Preguntas',
@@ -47,6 +47,8 @@ export default {
   maxPlayersHint: 'De 2 a 30 personas, sin contar a quien dirige',
   groupSizeLabel: 'Personas por grupo',
   groupSizeHint: 'De 3 a 5. Con menos de 6 no se hacen grupos: salen parejas en su lugar.',
+  secondsLabel: 'Segundos por pregunta',
+  secondsHint: '10 va bien casi siempre. Elige 12 o 15 para preguntas largas, 5 u 8 para ir rápido.',
   hostPlaysLabel: 'Quien dirige también responde',
   hostPlaysHint: 'Desactívalo para solo dirigir y quedarte fuera del reparto.',
   createButton: 'Crear sala',

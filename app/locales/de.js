@@ -13,9 +13,9 @@ export default {
   langSwitchLabel: 'Sprache wechseln',
   themeToggleLabel: 'Hell und dunkel umschalten',
 
-  heroTitle: 'Zehn Fragen — und du weißt, wer dir am ähnlichsten ist',
+  heroTitle: 'Ein paar Fragen — und du weißt, wer dir am ähnlichsten ist',
   heroDesc:
-    'Zehn Sekunden pro Frage, zustimmen oder ablehnen. Danach werden automatisch Gruppen gebildet, samt Themen, über die ihr reden könnt.',
+    'Jede Frage läuft auf Zeit: zustimmen oder ablehnen. Danach werden automatisch Gruppen gebildet, samt Themen, über die ihr reden könnt.',
 
   createHeading: 'Raum öffnen',
   questionsLabel: 'Fragen',
@@ -48,6 +48,8 @@ export default {
   groupSizeLabel: 'Personen pro Gruppe',
   groupSizeHint:
     '3 bis 5. Unter 6 Personen wird nicht aufgeteilt — dann gibt es stattdessen Paare.',
+  secondsLabel: 'Sekunden pro Frage',
+  secondsHint: '10 passt für die meisten Runden. 12 oder 15 für längere Fragen, 5 oder 8 für mehr Tempo.',
   hostPlaysLabel: 'Moderation macht mit',
   hostPlaysHint: 'Ausschalten, wenn du nur moderieren und nicht eingeteilt werden willst.',
   createButton: 'Raum erstellen',

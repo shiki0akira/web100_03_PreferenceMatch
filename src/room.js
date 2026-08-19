@@ -5,8 +5,8 @@
  * **每個人每一題的答案**留到遊戲結束才算得出分組，所以狀態量大得多，
  * 而且每次改動都要寫回 storage（Hibernation API 喚醒後記憶體會是空的）。
  *
- * 10 秒倒數的判定一律在這裡做。各家手機時鐘不一致，前端的倒數只是視覺效果，
- * 收到超過 deadline 的作答就不收。
+ * 每題倒數的判定一律在這裡做（秒數由主持人設定，見 questionSeconds）。
+ * 各家手機時鐘不一致，前端的倒數只是視覺效果，收到超過 deadline 的作答就不收。
  */
 
 import {
@@ -19,14 +19,17 @@ import {
 } from './grouping.js';
 
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
-const QUESTION_MS = 10 * 1000; // 每題 10 秒，由 deadline + alarm 執行
+// 每題幾秒。主持人可以在大廳改，只收這幾個值——開放任意數字會出現 1 秒或 300 秒這種
+// 沒人想玩的設定，而且 UI 是下拉選單，本來就只給這幾個選項
+const QUESTION_SECONDS = [5, 8, 10, 12, 15];
+const DEFAULT_QUESTION_SECONDS = 10;
 
 /*
  * 過了 deadline 之後還願意收的緩衝。
  *
  * 在第 9.9 秒按下去、但封包走了 200ms 才到的人，不該被算成「沒作答」——
  * 那一題會直接從他跟所有人的共同題數裡消失。緩衝只影響「收不收」，
- * 畫面上的倒數還是 10 秒歸零，玩家不會發現多這 0.4 秒。
+ * 畫面上的倒數還是準時歸零，玩家不會發現多這 0.4 秒。
  */
 const ANSWER_GRACE_MS = 400;
 
@@ -55,7 +58,7 @@ export class MatchRoom {
   }
 
   /*
-   * 一個 Durable Object 只有一個鬧鐘，但這裡有兩件事要定時：**題目 10 秒到**
+   * 一個 Durable Object 只有一個鬧鐘，但這裡有兩件事要定時：**題目時間到**
    * 與**房間閒置清除**。所以兩個時刻都存在 room 裡，鬧鐘永遠設在比較近的那個，
    * 醒來後再判斷是哪一件到期（搶答那個專案只有閒置清除，可以直接 setAlarm）。
    */
@@ -99,6 +102,7 @@ export class MatchRoom {
       // 主持人預設也一起作答、一起被分組。純控場的場合在大廳裡關掉
       hostPlays: true,
       groupSize: DEFAULT_GROUP_SIZE,
+      questionSeconds: DEFAULT_QUESTION_SECONDS,
 
       /*
        * 題目在**開好房間之後**才由主持人在大廳裡設定（handleSettings），
@@ -240,7 +244,7 @@ export class MatchRoom {
   }
 
   /*
-   * 主持人在大廳裡改設定：題目、每組人數、自己要不要作答。
+   * 主持人在大廳裡改設定：題目、每組人數、每題秒數、自己要不要作答。
    *
    * 每次都送「完整的」題目清單而不是增減指令：主持人可能同時開好幾個分頁，
    * 用增減指令兩邊會愈疊愈亂，整份覆蓋則不管誰後送都會收斂到同一個狀態。
@@ -260,6 +264,9 @@ export class MatchRoom {
       if (Number.isInteger(size) && size >= MIN_GROUP_SIZE && size <= MAX_GROUP_SIZE) {
         room.groupSize = size;
       }
+    }
+    if (msg.questionSeconds !== undefined && QUESTION_SECONDS.includes(Number(msg.questionSeconds))) {
+      room.questionSeconds = Number(msg.questionSeconds);
     }
     if (msg.hostPlays !== undefined) room.hostPlays = Boolean(msg.hostPlays);
 
@@ -350,7 +357,7 @@ export class MatchRoom {
   openQuestion(room, index) {
     room.status = 'question';
     room.index = index;
-    room.deadline = Date.now() + QUESTION_MS;
+    room.deadline = Date.now() + room.questionSeconds * 1000;
   }
 
   // 時間到（或緩衝也過了）：鎖定這一題，停在統計畫面等主持人按下一題。
@@ -519,6 +526,7 @@ function publicState(room, online) {
     started: room.started,
     hostPlays: room.hostPlays,
     groupSize: room.groupSize,
+    questionSeconds: room.questionSeconds,
     /*
      * 完整的題目清單**只在大廳送**。
      *
@@ -534,7 +542,7 @@ function publicState(room, online) {
     remainingMs: room.deadline ? Math.max(0, room.deadline - Date.now()) : 0,
     // 每題總長也送下來，讓進度條有個固定的分母。前端如果拿收到當下的 remainingMs
     // 當分母，每收到一次廣播（有人作答就會有一次）進度條就會跳回滿格
-    questionMs: QUESTION_MS,
+    questionMs: room.questionSeconds * 1000,
     hostOnline: online.has(room.hostId),
     players: Object.entries(room.players)
       .sort((a, b) => a[1].joinedAt - b[1].joinedAt)

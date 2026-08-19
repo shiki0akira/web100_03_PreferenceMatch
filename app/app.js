@@ -95,7 +95,7 @@
       'view-home', 'view-setup', 'view-join', 'view-room', 'view-error',
       'category-list', 'selected-count', 'custom-input', 'custom-add',
       'selected-list', 'selected-empty', 'random-pick',
-      'max-players', 'group-size', 'host-plays', 'create-room', 'create-error',
+      'max-players', 'group-size', 'question-seconds', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
       'role-badge', 'exit-room', 'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
@@ -409,6 +409,7 @@
     });
 
     el.groupSize.addEventListener('change', sendSettings);
+    el.questionSeconds.addEventListener('change', sendSettings);
     el.hostPlays.addEventListener('change', sendSettings);
 
     el.setupDone.addEventListener('click', finishSetup);
@@ -546,6 +547,7 @@
       t: 'settings',
       questions: questions,
       groupSize: Number(el.groupSize.value) || 4,
+      questionSeconds: secondsValue(),
       hostPlays: el.hostPlays.checked,
     });
   }
@@ -575,6 +577,12 @@
 
     sendSettings();
     showView('room');
+  }
+
+  // 秒數是一排單選，取選中的那顆；沒有選中（理論上不會）就退回預設
+  function secondsValue() {
+    var picked = el.questionSeconds.querySelector('input:checked');
+    return picked ? Number(picked.value) : 10;
   }
 
   function isOpen() {
@@ -816,6 +824,8 @@
       boxes[j].checked = state.selected.indexOf(boxes[j].dataset.question) >= 0;
     }
     el.groupSize.value = room.groupSize;
+    var secondsRadio = el.questionSeconds.querySelector('[value="' + room.questionSeconds + '"]');
+    if (secondsRadio) secondsRadio.checked = true;
     el.hostPlays.checked = room.hostPlays;
 
     renderSelectedListOnly();

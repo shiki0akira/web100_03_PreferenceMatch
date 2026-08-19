@@ -13,8 +13,9 @@ export default {
   langSwitchLabel: '切换语言',
   themeToggleLabel: '切换深浅色',
 
-  heroTitle: '答十道题，找到跟你最像的人',
-  heroDesc: '每题 10 秒，选同意或不同意。全部答完后自动分组，并告诉你这组有哪些话题可以聊。',
+  heroTitle: '几道题，找出谁跟你最像',
+  heroDesc:
+    '每题限时作答，选同意或不同意。全部答完后自动分组，并告诉你这组有哪些话题可以聊。',
 
   createHeading: '开一个房间',
   questionsLabel: '出题',
@@ -46,6 +47,8 @@ export default {
   maxPlayersHint: '2～30 人，不含主持人自己',
   groupSizeLabel: '每组几个人',
   groupSizeHint: '3～5 人。人数不足 6 人时不分组，改列两两契合度。',
+  secondsLabel: '每题几秒',
+  secondsHint: '10 秒适合大多数场合。题目长一点就选 12 或 15，想要紧凑一点就选 5 或 8。',
   hostPlaysLabel: '主持人也一起作答',
   hostPlaysHint: '关掉的话你只负责控场，不会被分到组里。',
   createButton: '创建房间',

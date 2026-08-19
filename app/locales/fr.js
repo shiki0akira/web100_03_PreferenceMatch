@@ -13,9 +13,9 @@ export default {
   langSwitchLabel: 'Changer de langue',
   themeToggleLabel: 'Basculer clair et sombre',
 
-  heroTitle: 'Dix questions pour trouver qui vous ressemble le plus',
+  heroTitle: 'Quelques questions pour trouver qui vous ressemble le plus',
   heroDesc:
-    "Dix secondes par question : d'accord ou pas d'accord. À la fin, les groupes se forment tout seuls, avec les sujets dont vous pouvez parler.",
+    'Chaque question est chronométrée : d’accord ou pas d’accord. À la fin, les groupes se forment tout seuls, avec les sujets dont vous pouvez parler.',
 
   createHeading: 'Ouvrir un salon',
   questionsLabel: 'Questions',
@@ -47,6 +47,8 @@ export default {
   maxPlayersHint: 'De 2 à 30 personnes, animation non comprise',
   groupSizeLabel: 'Personnes par groupe',
   groupSizeHint: '3 à 5. En dessous de 6 participants, pas de groupes : des binômes à la place.',
+  secondsLabel: 'Secondes par question',
+  secondsHint: '10 convient à la plupart des salons. 12 ou 15 pour des questions plus longues, 5 ou 8 pour aller vite.',
   hostPlaysLabel: "L'animation répond aussi",
   hostPlaysHint: 'Désactivez pour animer seulement et ne pas être réparti.',
   createButton: 'Créer le salon',

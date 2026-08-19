@@ -10,6 +10,7 @@
  */
 
 import { mkdir, readFile, writeFile, cp, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -51,6 +52,22 @@ async function main() {
   checkStrings();
   checkQuestions(LANGS);
 
+  /*
+   * 靜態資源帶上版本號（app.js?v=xxxx）。
+   *
+   * Worker 給的是 max-age=0, must-revalidate，理論上每次都會回源確認，但實務上
+   * 瀏覽器（尤其是行動裝置與內嵌 WebView）常常還是拿舊的——部署完使用者看到舊版、
+   * 得手動強制重整才會更新。網址變了就一定是新的請求，這個問題就不存在。
+   *
+   * 版本取自 app.js + app.css 的內容雜湊：內容沒變網址就不變，快取照樣有效。
+   */
+  const assetVersion = createHash('sha256')
+    .update(await readFile(join(root, 'app', 'app.js')))
+    .update(await readFile(join(root, 'app', 'app.css')))
+    .update(await readFile(join(root, 'app', 'header.js')))
+    .digest('hex')
+    .slice(0, 8);
+
   await cleanDist();
   await mkdir(outBase, { recursive: true });
 
@@ -65,7 +82,7 @@ async function main() {
     const withPartials = injectPartials(template, partials);
 
     for (const lang of LANGS) {
-      const html = render(withPartials, tokensFor(lang, page));
+      const html = render(withPartials, tokensFor(lang, page, assetVersion));
       const dir = join(outBase, lang, page.dir);
       await mkdir(dir, { recursive: true });
       await writeFile(join(dir, 'index.html'), html, 'utf8');
@@ -143,7 +160,7 @@ function pagePath(lang, page) {
   return `${BASE_PATH}/${lang}/` + (page.dir ? `${page.dir}/` : '');
 }
 
-function tokensFor(lang, page) {
+function tokensFor(lang, page, assetVersion) {
   const strings = STRINGS[lang];
 
   return {
@@ -154,6 +171,7 @@ function tokensFor(lang, page) {
     projectId: PROJECT_ID,
     siteOrigin: ORIGIN,
     workerOrigin: WORKER_ORIGIN,
+    assetVersion,
     // head partial 用的是通用名稱，各頁面把自己的 title/description 餵進去
     pageTitle: strings[page.titleKey],
     pageDesc: strings[page.descKey],

@@ -13,9 +13,9 @@ export default {
   langSwitchLabel: '言語を切り替える',
   themeToggleLabel: 'ライト／ダークを切り替える',
 
-  heroTitle: '10問答えて、いちばん自分と近い人を見つける',
+  heroTitle: 'いくつかの質問で、いちばん自分と近い人を見つける',
   heroDesc:
-    '1問10秒、賛成か反対かを選ぶだけ。全問終わると自動でグループ分けし、そのグループで話せる話題も出します。',
+    '各問に制限時間があり、賛成か反対かを選ぶだけ。全問終わると自動でグループ分けし、そのグループで話せる話題も出します。',
 
   createHeading: 'ルームを作る',
   questionsLabel: '質問',
@@ -47,6 +47,8 @@ export default {
   maxPlayersHint: '2〜30人。進行役自身は含みません',
   groupSizeLabel: '1グループの人数',
   groupSizeHint: '3〜5人。6人未満のときはグループ分けせず、2人ずつの相性を出します。',
+  secondsLabel: '1問あたりの秒数',
+  secondsHint: 'ふつうは10秒。質問が長めなら12〜15秒、テンポよく進めたいなら5〜8秒。',
   hostPlaysLabel: '進行役も回答する',
   hostPlaysHint: 'オフにすると進行役に専念し、グループには入りません。',
   createButton: 'ルームを作成',

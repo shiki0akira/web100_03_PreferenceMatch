@@ -13,9 +13,9 @@ export default {
   langSwitchLabel: '언어 변경',
   themeToggleLabel: '밝게／어둡게 전환',
 
-  heroTitle: '열 문항으로 나와 가장 비슷한 사람 찾기',
+  heroTitle: '몇 개의 문항으로 나와 가장 비슷한 사람 찾기',
   heroDesc:
-    '한 문항에 10초, 동의인지 비동의인지만 고르세요. 다 끝나면 자동으로 조를 나누고 그 조에서 나눌 이야깃거리까지 알려 줍니다.',
+    '문항마다 제한 시간이 있고, 동의인지 비동의인지만 고르면 됩니다. 다 끝나면 자동으로 조를 나누고 이야깃거리까지 알려 줍니다.',
 
   createHeading: '방 만들기',
   questionsLabel: '문항',
@@ -47,6 +47,8 @@ export default {
   maxPlayersHint: '2~30명, 진행자 본인은 제외',
   groupSizeLabel: '한 조 인원',
   groupSizeHint: '3~5명. 6명 미만이면 조를 나누지 않고 둘씩 궁합만 보여 줍니다.',
+  secondsLabel: '문항당 초',
+  secondsHint: '보통은 10초. 문항이 길면 12~15초, 빠르게 진행하려면 5~8초.',
   hostPlaysLabel: '진행자도 함께 답하기',
   hostPlaysHint: '끄면 진행만 맡고 조에는 들어가지 않습니다.',
   createButton: '방 만들기',
