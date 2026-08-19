@@ -47,12 +47,17 @@ html.light {
 
   /* 同意固定走 Primary（藍）、不同意固定走 Secondary（粉），兩個主題都一樣，
      不能直接用 --btn-face：它在淺色模式是 Secondary，同意會跟著變粉色 */
-  --ox-o-face: var(--primary-700);
-  --ox-o-edge: var(--primary-800);
+  /* 淺色模式：500 當底、600 當厚度、900 當文字，跟 --btn-face 那組同一套配法 */
+  --ox-o-face: var(--primary-500);
+  --ox-o-soft: var(--primary-300);
+  --ox-o-edge: var(--primary-600);
+  --ox-o-text: var(--primary-900);
+  --ox-o-mark: var(--primary-700);
+
   --ox-x-face: var(--secondary-500);
+  --ox-x-soft: var(--secondary-300);
   --ox-x-edge: var(--secondary-600);
   --ox-x-text: var(--secondary-900);
-  --ox-o-mark: var(--primary-700);
   --ox-x-mark: var(--secondary-700);
 
   color-scheme: light;
@@ -69,12 +74,17 @@ html.light {
   --switch-off: var(--primary-800);
 
   --ox-o-face: var(--primary-700);
+  /* 未選中的底色：夠濃才看得出兩顆的差別，但不能濃到跟「已選中」搞混 */
+  --ox-o-soft: color-mix(in srgb, var(--primary-600) 26%, transparent);
   --ox-o-edge: var(--primary-800);
+  --ox-o-text: #ffffff;
+  --ox-o-mark: var(--primary-400);
+
   /* 深色模式下 Secondary/500 太亮，白字壓不住，往下兩階換成 800 */
   --ox-x-face: var(--secondary-800);
+  --ox-x-soft: color-mix(in srgb, var(--secondary-700) 26%, transparent);
   --ox-x-edge: var(--secondary-900);
   --ox-x-text: #ffffff;
-  --ox-o-mark: var(--primary-400);
   --ox-x-mark: var(--secondary-500);
 
   color-scheme: dark;
@@ -1067,32 +1077,42 @@ textarea.field {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  gap: 0.4rem;
   padding: var(--space-3) var(--space-1);
-  border: 2px solid var(--color-outline);
+  border: 2px solid var(--ox-edge);
   border-radius: var(--radius);
-  background: var(--color-bg-card);
+  background: var(--ox-soft);
   color: var(--color-text);
   font-family: var(--font-family);
   font-size: var(--font-size-body);
   cursor: pointer;
+  /* 立體感：3px 的厚度陰影，按下去會沉下去（ARCHITECTURE 第 7 節） */
+  box-shadow: 0 3px 0 var(--ox-edge);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   /* 手機單手也按得到，兩顆各佔一半寬、夠高 */
-  min-height: 7rem;
-}
-
-.ox-mark {
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-/* 加粗：已選那顆是白字疊在 --btn-face 上，量出來 4.34:1，
-   對一般字級差一點才到 AA 的 4.5，加粗把可讀性補回來 */
-.ox-word {
-  font-weight: 700;
+  min-height: 8.5rem;
 }
 
 .ox-button:hover:not(:disabled) {
-  border-color: var(--color-outline-hover);
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 var(--ox-edge);
+}
+
+.ox-button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--ox-edge);
+}
+
+.ox-mark {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--ox-mark);
+}
+
+.ox-word {
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
 /*
@@ -1101,11 +1121,18 @@ textarea.field {
  * （深色 Primary/400 on Primary/800、淺色 Secondary/800 on Secondary/200，都是 4.62:1）。
  * 只改文字顏色而不換底色的話，淺紫的字會落在近乎透明的卡片底上，糊成一片。
  */
+/* disabled 走「壓扁」語言：拿掉厚度陰影，但文字要保持清楚可讀 */
 .ox-button:disabled {
   cursor: default;
   opacity: 1;
+  transform: none;
+  box-shadow: none;
   background: var(--btn-disabled-face);
   border-color: transparent;
+  color: var(--btn-disabled-text);
+}
+
+.ox-button:disabled .ox-mark {
   color: var(--btn-disabled-text);
 }
 
@@ -1118,47 +1145,36 @@ textarea.field {
  *
  * 放在 :disabled 之後：兩者特異性相同，靠順序決勝——時間到之後仍要看得出自己選了哪邊。
  */
+/* 每一顆把自己的色組指派給共用變數，下面的規則就不用寫兩份 */
+.ox-o {
+  --ox-soft: var(--ox-o-soft);
+  --ox-edge: var(--ox-o-edge);
+  --ox-mark: var(--ox-o-mark);
+}
+
+.ox-x {
+  --ox-soft: var(--ox-x-soft);
+  --ox-edge: var(--ox-x-edge);
+  --ox-mark: var(--ox-x-mark);
+}
+
+/* 選中之後整顆填滿，符號回到跟文字同色 */
 .ox-o.chosen,
 .ox-o.chosen:disabled {
   background: var(--ox-o-face);
-  border-color: var(--ox-o-edge);
-  color: #ffffff;
+  color: var(--ox-o-text);
 }
 
 .ox-x.chosen,
 .ox-x.chosen:disabled {
   background: var(--ox-x-face);
-  border-color: var(--ox-x-edge);
   color: var(--ox-x-text);
 }
 
-/*
- * 沒選中時也要一眼分得出兩顆——只有邊框變色太細，遠看根本一樣。
- * 底色用 color-mix 調成 14% 的淡色，夠明顯但又不會跟「已選中」的實心混淆；
- * ◯／✕ 符號本身也上色，那是視線第一個落點。
- */
-.ox-o {
-  border-color: var(--ox-o-edge);
-  background: color-mix(in srgb, var(--ox-o-face) 14%, transparent);
-}
-
-.ox-x {
-  border-color: var(--ox-x-edge);
-  background: color-mix(in srgb, var(--ox-x-face) 14%, transparent);
-}
-
-.ox-o .ox-mark {
-  color: var(--ox-o-mark);
-}
-
-.ox-x .ox-mark {
-  color: var(--ox-x-mark);
-}
-
-/* 選中之後整顆填滿，符號回到跟文字同色 */
 .ox-button.chosen .ox-mark {
   color: inherit;
 }
+
 
 /* ---------- 統計 ---------- */
 
