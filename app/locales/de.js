@@ -3,7 +3,7 @@ export default {
   ogLocale: 'de_DE',
 
   seoTitle:
-    'Dies-oder-das-Eisbrecher | Ja/Nein-Fragen, die Gemeinsamkeiten sichtbar machen',
+    'Dies oder das | Eisbrecher-Spiel, das Gemeinsamkeiten automatisch findet',
   seoDesc:
     'Ein Kennenlernspiel für Feiern, Kleingruppen und Teamevents. Alle beantworten am eigenen Handy eine Reihe von Entweder-oder-Fragen; danach wird die Runde nach ähnlichen Antworten gruppiert — samt Themen zum Weiterreden. Kein Download, keine Anmeldung, einfach QR-Code scannen.',
   rulesSeoTitle: 'Dies oder das — Spielanleitung',

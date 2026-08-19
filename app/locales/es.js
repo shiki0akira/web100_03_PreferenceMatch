@@ -3,7 +3,7 @@ export default {
   ogLocale: 'es_ES',
 
   seoTitle:
-    'Rompehielos «esto o aquello» | Preguntas de sí/no que agrupan por lo que compartís',
+    'Esto o aquello | Juego rompehielos que agrupa por lo que tenéis en común',
   seoDesc:
     'Un juego rompehielos para fiestas, grupos pequeños y eventos de equipo. Cada persona responde desde su móvil una tanda de preguntas de esto-o-aquello, y al terminar la sala se reparte según quién respondió parecido, con temas de los que hablar. Sin descargas ni registro: basta con escanear un QR.',
   rulesSeoTitle: 'Esto o aquello — cómo se juega',

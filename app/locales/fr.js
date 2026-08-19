@@ -3,7 +3,7 @@ export default {
   ogLocale: 'fr_FR',
 
   seoTitle:
-    'Brise-glace « ceci ou cela » | Des questions oui/non qui révèlent vos points communs',
+    'Ceci ou cela | Jeu brise-glace qui révèle automatiquement vos points communs',
   seoDesc:
     'Un jeu brise-glace pour les soirées, les petits groupes et les événements d’équipe. Chacun répond sur son téléphone à une série de questions « ceci ou cela », puis le groupe est réparti selon les réponses semblables, avec des sujets de conversation à la clé. Sans installation ni inscription : scannez un QR code.',
   rulesSeoTitle: 'Plutôt ceci ou cela — comment jouer',

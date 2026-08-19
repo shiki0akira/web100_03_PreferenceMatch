@@ -3,7 +3,7 @@ export default {
   ogLocale: 'en_US',
 
   seoTitle:
-    'This or That Icebreaker | Agree/disagree questions that group people by what they share',
+    'This or That | Icebreaker game that groups people by what they have in common',
   seoDesc:
     'An icebreaker game for parties, small groups and team events. Everyone answers a run of this-or-that agree/disagree questions on their own phone, then the room is grouped by who answered alike — with the topics each group can talk about. No download, no sign-up, just scan a QR code.',
   rulesSeoTitle: 'This or That — how to play',
