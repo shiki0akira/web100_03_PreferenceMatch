@@ -149,14 +149,16 @@ O/X 偏好配對破冰遊戲：大家用手機各自對一系列「同意／不�
 
 ## 部署狀態
 
-**已正式上線**：（8 種語言）
+**已正式上線**：`https://www.vibeweb100.com/match/{lang}/`（8 種語言）
 
-- repo 、網址代號  已定案，之後要改就得處理轉址
-- Worker：- 接法同搶答：**網頁走 Vercel rewrite 代理，API 與 WebSocket 由客戶端直連 Worker**
-  （Vercel 代理外部網址時對 WebSocket 升級的支援不可靠）。判斷在  的 - 首頁已加第三張卡片、robots.txt 已列 match-sitemap.xml、ARCHITECTURE 進度表與 README 已更新
+- repo `web100_03_PreferenceMatch`、網址代號 `/match/` 已定案，之後要改就得處理轉址
+- Worker：`web100-03-preference-match.shiki0akira.workers.dev`
+- 接法同搶答：**網頁走 Vercel rewrite 代理，API 與 WebSocket 由客戶端直連 Worker**
+  （Vercel 代理外部網址時對 WebSocket 升級的支援不可靠）。判斷在 `app/app.js` 的 `API_ORIGIN`
+- 首頁已加第三張卡片、robots.txt 已列 match-sitemap.xml、ARCHITECTURE 進度表與 README 已更新
 
 ### 還沒做
 
-- **GA4 還沒接**：事件已經在程式裡（ 前綴），但還沒對照搶答那樣確認資料有進來
+- **GA4 還沒驗證**：事件已經寫在程式裡（`match_` 前綴），但還沒像搶答那樣確認資料真的有進來
 - 把玩法頁寫厚（帶團經驗、題目怎麼挑、幾人最適合）——首頁專案 2026/8 遭演算法降權後，
   剩下沒做的就是內容深度
