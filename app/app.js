@@ -594,6 +594,16 @@
     var total = state.selected.length + state.custom.length;
     if (total < MIN_QUESTIONS) return showError(el.startGameError, t('errNoQuestions'));
     if (total > MAX_QUESTIONS) return showError(el.startGameError, t('errTooManyQuestions'));
+
+    /*
+     * 漏斗最關鍵的一段：少了這個事件就分不出「開了房沒玩」與「真的玩完」。
+     * 只有主持人這台會送——狀態是廣播給全場的，照著狀態送會一場記十次。
+     */
+    track('match_game_started', {
+      question_count: total,
+      player_count: state.room ? state.room.players.length : 0,
+      question_seconds: secondsValue(),
+    });
     send({ t: 'startGame' });
   }
 
