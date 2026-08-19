@@ -144,7 +144,11 @@ O/X 偏好配對破冰遊戲：大家用手機各自對一系列「同意／不�
 - 沒有「搶」的成分，`pointerdown` vs `click` 那類低延遲優化不需要
 - **10 秒倒數的判定一定要在 DO**：推進到某題時記下 `deadline` 一併廣播，前端倒數只是視覺效果，收到超過 `deadline` 的作答就不收。各手機時鐘不一致，不能讓前端決定截止
 
-## 開工前要決定的事
+## 部署狀態
 
-- **repo 名稱與路徑代號**：目前暫用 `web100_03_PreferenceMatch`，網址代號建議 `/match/`。這兩個上線後就不好改（SEO、路由總機），趁還沒部署先定案
-- 依 `ARCHITECTURE.md` 第 10 節的新專案檢查清單走一遍
+- repo 名稱 `web100_03_PreferenceMatch`、網址代號 `/match/` **已定案並上線**，之後要改就得處理轉址
+- 已部署：`https://web100-03-preference-match.shiki0akira.workers.dev/match/`
+- **還沒做**（`ARCHITECTURE.md` 第 10 節檢查清單的第 5～7 步）：
+  - 首頁 repo 的 `vercel.json` 加 `/match/*` 轉發 —— 少了這步 `vibeweb100.com/match/` 會是 404
+  - `ARCHITECTURE.md` 第 9 節的進度追蹤表
+  - 首頁 `README.md` 的專案一覽
