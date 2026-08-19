@@ -41,6 +41,9 @@ export default {
   categorySocial: 'Relations et amour',
   categoryBelief: 'Petites convictions',
   categorySmallgroup: 'Petit groupe',
+  categoryTravel: 'Voyages',
+  categoryTech: 'Vie en ligne',
+  categoryWork: 'Travail et études',
 
   advancedSummary: 'Autres réglages',
   maxPlayersLabel: 'Nombre maximum',

@@ -41,6 +41,9 @@ export default {
   categorySocial: 'Relaciones y amor',
   categoryBelief: 'Pequeñas creencias',
   categorySmallgroup: 'Grupo pequeño',
+  categoryTravel: 'Viajes',
+  categoryTech: 'Vida digital',
+  categoryWork: 'Trabajo y estudio',
 
   advancedSummary: 'Más ajustes',
   maxPlayersLabel: 'Límite de participantes',

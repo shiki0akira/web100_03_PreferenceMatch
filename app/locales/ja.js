@@ -41,6 +41,9 @@ export default {
   categorySocial: '人づきあい・恋愛観',
   categoryBelief: '小さな信念',
   categorySmallgroup: '小グループ',
+  categoryTravel: '旅行',
+  categoryTech: 'ネットとSNS',
+  categoryWork: '仕事と勉強',
 
   advancedSummary: 'その他の設定',
   maxPlayersLabel: '人数の上限',

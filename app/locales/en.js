@@ -41,6 +41,9 @@ export default {
   categorySocial: 'People and dating',
   categoryBelief: 'Small beliefs',
   categorySmallgroup: 'Small group',
+  categoryTravel: 'Travel',
+  categoryTech: 'Online life',
+  categoryWork: 'Work and study',
 
   advancedSummary: 'More settings',
   maxPlayersLabel: 'Player limit',

@@ -41,6 +41,9 @@ export default {
   categorySocial: '인간관계와 연애관',
   categoryBelief: '작은 신념',
   categorySmallgroup: '소그룹',
+  categoryTravel: '여행',
+  categoryTech: '인터넷과 SNS',
+  categoryWork: '일과 공부',
 
   advancedSummary: '기타 설정',
   maxPlayersLabel: '인원 제한',

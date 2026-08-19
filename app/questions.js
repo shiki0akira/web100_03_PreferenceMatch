@@ -1,5 +1,5 @@
 /*
- * 預設題庫。7 個分類各 5 題，主持人開房間時勾選要用哪幾類。
+ * 預設題庫。10 個分類各 5 題，主持人開房間時勾選要用哪幾類。
  *
  * ── 為什麼一題的 8 種語言寫在一起 ──
  * 因為**同一個房間裡的人可能各自用不同語言**：主持人開的是同一個房號，
@@ -21,26 +21,29 @@ export const CATEGORIES = [
   'social', // 人際與感情觀
   'belief', // 小信念
   'smallgroup', // 小組破冰（團契／小組聚會用）
+  'travel', // 旅行
+  'tech', // 網路與社群
+  'work', // 工作與學習
 ];
 
 /*
- * 預設勾選：七個分類各挑一到兩題，湊 10 題（落在建議的 8～10 題裡）。
+ * 預設勾選：十個分類各挑一題，剛好 10 題（落在建議的 8～10 題裡）。
  *
  * 挑的是每類裡最會讓全場分成兩半的題目——九成人都選同一邊的題目對分組毫無貢獻，
  * 放進預設只是浪費 10 秒。分類本身**不預設展開**：七類全開會讓主持人一進來就面對
  * 三十幾個 checkbox，右邊的「已選題目」才是他該先看的東西。
  */
 export const DEFAULT_QUESTION_IDS = [
-  'life.morning',
   'life.phone',
   'food.pineapple',
-  'food.taro',
   'leisure.horror',
-  'leisure.karaoke',
   'personality.spontaneous',
   'social.splitbill',
   'belief.saving',
   'smallgroup.crowd',
+  'travel.light',
+  'tech.call',
+  'work.deadline',
 ];
 
 export const QUESTIONS = [
@@ -545,6 +548,222 @@ export const QUESTIONS = [
       ja: '集まりの中で一番楽しみなのは賛美の時間だ',
       ko: '모임에서 가장 기대되는 건 찬양 시간이다',
       es: 'La alabanza es la parte de la reunión que más espero',
+    },
+  },
+
+  // ── 旅行 ──────────────────────────────────────────────────
+  {
+    id: 'travel.light',
+    category: 'travel',
+    text: {
+      'zh-TW': '出門旅行我只帶手提行李就夠了',
+      'zh-CN': '出门旅行我只带手提行李就够了',
+      en: 'Carry-on only is enough for me on a trip',
+      de: 'Für eine Reise reicht mir Handgepäck',
+      fr: 'Un bagage cabine me suffit pour voyager',
+      ja: '旅行は手荷物だけで十分だ',
+      ko: '여행은 기내용 가방 하나면 충분하다',
+      es: 'Con equipaje de mano me basta para viajar',
+    },
+  },
+  {
+    id: 'travel.photo',
+    category: 'travel',
+    text: {
+      'zh-TW': '到了景點，我一定要拍照留念',
+      'zh-CN': '到了景点，我一定要拍照留念',
+      en: 'At a sight, I always have to take photos',
+      de: 'An einer Sehenswürdigkeit muss ich immer Fotos machen',
+      fr: 'Sur un site touristique, je prends toujours des photos',
+      ja: '観光地に着いたら必ず写真を撮る',
+      ko: '명소에 가면 꼭 사진을 찍어야 한다',
+      es: 'En un sitio turístico siempre tengo que hacer fotos',
+    },
+  },
+  {
+    id: 'travel.repeat',
+    category: 'travel',
+    text: {
+      'zh-TW': '與其去沒去過的地方，我更願意重遊喜歡的地方',
+      'zh-CN': '与其去没去过的地方，我更愿意重游喜欢的地方',
+      en: 'I would rather return to a place I love than go somewhere new',
+      de: 'Lieber noch einmal an einen Lieblingsort als an einen neuen',
+      fr: 'Je préfère retourner dans un endroit que j’aime plutôt qu’en découvrir un nouveau',
+      ja: '初めての場所より、好きな場所にもう一度行きたい',
+      ko: '새로운 곳보다 좋아하는 곳에 다시 가는 게 좋다',
+      es: 'Prefiero volver a un sitio que me gusta antes que ir a uno nuevo',
+    },
+  },
+  {
+    id: 'travel.queue',
+    category: 'travel',
+    text: {
+      'zh-TW': '旅行時我寧願排隊吃名店，也不隨便找一家',
+      'zh-CN': '旅行时我宁愿排队吃名店，也不随便找一家',
+      en: 'On a trip I would rather queue for the famous place than just eat anywhere',
+      de: 'Auf Reisen stelle ich mich lieber an, als irgendwo zu essen',
+      fr: 'En voyage, je préfère faire la queue pour l’adresse réputée que manger n’importe où',
+      ja: '旅先では適当な店より、並んででも有名店に行きたい',
+      ko: '여행지에서는 아무 데나 가느니 줄 서서라도 유명한 집에 간다',
+      es: 'De viaje prefiero hacer cola en el sitio famoso que comer en cualquier lado',
+    },
+  },
+  {
+    id: 'travel.alone',
+    category: 'travel',
+    text: {
+      'zh-TW': '一個人旅行很自在',
+      'zh-CN': '一个人旅行很自在',
+      en: 'Travelling alone feels comfortable to me',
+      de: 'Alleine zu reisen ist für mich angenehm',
+      fr: 'Voyager seul me met à l’aise',
+      ja: '一人旅は気楽でいい',
+      ko: '혼자 여행하는 게 편하다',
+      es: 'Viajar solo me resulta cómodo',
+    },
+  },
+
+  // ── 網路與社群 ────────────────────────────────────────────
+  {
+    id: 'tech.read',
+    category: 'tech',
+    text: {
+      'zh-TW': '已讀不回沒關係，我不會在意',
+      'zh-CN': '已读不回没关系，我不会在意',
+      en: 'Being left on read does not bother me',
+      de: 'Wenn jemand meine Nachricht liest und nicht antwortet, stört mich das nicht',
+      fr: 'Être lu sans réponse ne me dérange pas',
+      ja: '既読スルーされても気にならない',
+      ko: '읽고 답장 안 해도 신경 쓰이지 않는다',
+      es: 'Que me dejen en visto no me molesta',
+    },
+  },
+  {
+    id: 'tech.post',
+    category: 'tech',
+    text: {
+      'zh-TW': '我很少在社群上發自己的近況',
+      'zh-CN': '我很少在社交平台上发自己的近况',
+      en: 'I rarely post about my own life on social media',
+      de: 'Ich poste selten etwas über mein eigenes Leben in sozialen Medien',
+      fr: 'Je publie rarement ce que je vis sur les réseaux sociaux',
+      ja: 'SNSに自分の近況を投稿することはあまりない',
+      ko: 'SNS에 내 근황을 잘 올리지 않는다',
+      es: 'Rara vez publico sobre mi vida en redes sociales',
+    },
+  },
+  {
+    id: 'tech.call',
+    category: 'tech',
+    text: {
+      'zh-TW': '比起打電話，我更喜歡傳訊息',
+      'zh-CN': '比起打电话，我更喜欢发消息',
+      en: 'I would rather text than make a phone call',
+      de: 'Ich schreibe lieber, als zu telefonieren',
+      fr: 'Je préfère écrire un message plutôt que téléphoner',
+      ja: '電話より、メッセージのほうがいい',
+      ko: '전화보다 메시지가 더 편하다',
+      es: 'Prefiero escribir un mensaje antes que llamar',
+    },
+  },
+  {
+    id: 'tech.notify',
+    category: 'tech',
+    text: {
+      'zh-TW': '手機的通知我幾乎都關掉',
+      'zh-CN': '手机的通知我几乎都关掉',
+      en: 'I keep almost all phone notifications turned off',
+      de: 'Fast alle Benachrichtigungen auf meinem Handy sind aus',
+      fr: 'Je désactive presque toutes les notifications de mon téléphone',
+      ja: 'スマホの通知はほとんど切っている',
+      ko: '휴대폰 알림은 거의 다 꺼 둔다',
+      es: 'Tengo casi todas las notificaciones del móvil desactivadas',
+    },
+  },
+  {
+    id: 'tech.shortvideo',
+    category: 'tech',
+    text: {
+      'zh-TW': '短影音我一滑就停不下來',
+      'zh-CN': '短视频我一刷就停不下来',
+      en: 'Once I start on short videos I cannot stop',
+      de: 'Wenn ich mit Kurzvideos anfange, höre ich nicht mehr auf',
+      fr: 'Dès que je commence les vidéos courtes, je ne peux plus m’arrêter',
+      ja: 'ショート動画は見始めると止まらない',
+      ko: '숏폼은 한번 보기 시작하면 멈출 수가 없다',
+      es: 'Cuando empiezo con los vídeos cortos no puedo parar',
+    },
+  },
+
+  // ── 工作與學習 ────────────────────────────────────────────
+  {
+    id: 'work.remote',
+    category: 'work',
+    text: {
+      'zh-TW': '比起進辦公室，我更喜歡遠端工作',
+      'zh-CN': '比起进办公室，我更喜欢远程工作',
+      en: 'I prefer working remotely to going into an office',
+      de: 'Ich arbeite lieber remote als im Büro',
+      fr: 'Je préfère le télétravail au bureau',
+      ja: 'オフィスに行くより、リモートで働くほうが好きだ',
+      ko: '사무실에 가는 것보다 재택근무가 더 좋다',
+      es: 'Prefiero trabajar en remoto antes que ir a la oficina',
+    },
+  },
+  {
+    id: 'work.list',
+    category: 'work',
+    text: {
+      'zh-TW': '我習慣把待辦事項寫下來',
+      'zh-CN': '我习惯把待办事项写下来',
+      en: 'I write my to-dos down',
+      de: 'Ich schreibe meine Aufgaben auf',
+      fr: 'J’écris mes tâches à faire',
+      ja: 'やることは書き出しておく',
+      ko: '할 일은 적어 두는 편이다',
+      es: 'Apunto las cosas que tengo que hacer',
+    },
+  },
+  {
+    id: 'work.deadline',
+    category: 'work',
+    text: {
+      'zh-TW': '我通常拖到最後一刻才開始做',
+      'zh-CN': '我通常拖到最后一刻才开始做',
+      en: 'I usually start only at the last minute',
+      de: 'Ich fange meist erst auf den letzten Drücker an',
+      fr: 'Je m’y mets généralement à la dernière minute',
+      ja: 'たいてい締め切り間際になってから始める',
+      ko: '보통 마감 직전에야 시작한다',
+      es: 'Normalmente empiezo solo en el último momento',
+    },
+  },
+  {
+    id: 'work.music',
+    category: 'work',
+    text: {
+      'zh-TW': '工作或讀書時我需要放音樂',
+      'zh-CN': '工作或学习时我需要放音乐',
+      en: 'I need music playing while I work or study',
+      de: 'Beim Arbeiten oder Lernen brauche ich Musik',
+      fr: 'J’ai besoin de musique quand je travaille ou révise',
+      ja: '仕事や勉強のときは音楽が必要だ',
+      ko: '일하거나 공부할 때 음악이 필요하다',
+      es: 'Necesito música mientras trabajo o estudio',
+    },
+  },
+  {
+    id: 'work.multitask',
+    category: 'work',
+    text: {
+      'zh-TW': '我可以同時處理好幾件事，不用一件一件來',
+      'zh-CN': '我可以同时处理好几件事，不用一件一件来',
+      en: 'I can juggle several things at once rather than one at a time',
+      de: 'Ich kann mehrere Dinge gleichzeitig machen, nicht nur eins nach dem anderen',
+      fr: 'Je peux mener plusieurs choses de front plutôt qu’une à la fois',
+      ja: '一つずつでなく、同時に何件も進められる',
+      ko: '한 번에 하나씩이 아니라 여러 가지를 동시에 처리할 수 있다',
+      es: 'Puedo llevar varias cosas a la vez en lugar de una por una',
     },
   },
 ];

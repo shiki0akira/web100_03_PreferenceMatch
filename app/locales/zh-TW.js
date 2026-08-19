@@ -47,6 +47,9 @@ export default {
   categorySocial: '人際與感情觀',
   categoryBelief: '小信念',
   categorySmallgroup: '小組破冰',
+  categoryTravel: '旅行',
+  categoryTech: '網路與社群',
+  categoryWork: '工作與學習',
 
   advancedSummary: '其他設定',
   maxPlayersLabel: '人數上限',

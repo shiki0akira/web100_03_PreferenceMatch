@@ -41,6 +41,9 @@ export default {
   categorySocial: 'Menschen und Beziehungen',
   categoryBelief: 'Kleine Überzeugungen',
   categorySmallgroup: 'Kleingruppe',
+  categoryTravel: 'Reisen',
+  categoryTech: 'Online',
+  categoryWork: 'Arbeit und Lernen',
 
   advancedSummary: 'Weitere Einstellungen',
   maxPlayersLabel: 'Maximale Teilnehmerzahl',
