@@ -2,9 +2,10 @@ export default {
   htmlLang: 'de',
   ogLocale: 'de_DE',
 
-  seoTitle: 'Dies oder das — Ja/Nein-Matching zum Kennenlernen',
+  seoTitle:
+    'Dies-oder-das-Eisbrecher | Ja/Nein-Fragen, die Gemeinsamkeiten sichtbar machen',
   seoDesc:
-    'Alle beantworten am eigenen Handy eine Reihe von Zustimmen/Ablehnen-Fragen. Am Ende wird die Runde automatisch in Gruppen aufgeteilt, die ähnlich geantwortet haben — inklusive Themen zum Weiterreden. Kein Download, keine Anmeldung, einfach QR-Code scannen.',
+    'Ein Kennenlernspiel für Feiern, Kleingruppen und Teamevents. Alle beantworten am eigenen Handy eine Reihe von Entweder-oder-Fragen; danach wird die Runde nach ähnlichen Antworten gruppiert — samt Themen zum Weiterreden. Kein Download, keine Anmeldung, einfach QR-Code scannen.',
   rulesSeoTitle: 'Dies oder das — Spielanleitung',
   rulesSeoDesc: 'Wie man einen Raum öffnet, Fragen auswählt und wie die Gruppen berechnet werden.',
 
@@ -13,7 +14,8 @@ export default {
   langSwitchLabel: 'Sprache wechseln',
   themeToggleLabel: 'Hell und dunkel umschalten',
 
-  heroTitle: 'Ein paar Fragen — und du weißt, wer dir am ähnlichsten ist',
+  heroTitle:
+    'Dies oder das: das Eis brechen und Gemeinsamkeiten finden',
   heroDesc:
     'Jede Frage läuft auf Zeit: zustimmen oder ablehnen. Danach werden automatisch Gruppen gebildet, samt Themen, über die ihr reden könnt.',
 

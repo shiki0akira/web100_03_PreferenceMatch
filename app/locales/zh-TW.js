@@ -8,9 +8,10 @@ export default {
   htmlLang: 'zh-Hant-TW',
   ogLocale: 'zh_TW',
 
-  seoTitle: '喜好二選一 — 手機 O/X 偏好配對破冰遊戲',
+  seoTitle:
+    '二選一破冰遊戲｜圈叉選一選，自動找出共同點的手機破冰工具',
   seoDesc:
-    '大家用手機對一系列「同意／不同意」的題目作答，結束後自動把全場分成答案最像的小組，並列出可以聊的共同話題。免下載、免註冊，掃 QR code 就能玩。',
+    '聚會、小組、團契、公司活動的破冰遊戲。大家用手機對一連串「同意／不同意」的二選一題目作答，結束後自動把答案最像的人分成一組，並列出可以聊的共同話題。免下載、免註冊，掃 QR code 就能玩。',
   rulesSeoTitle: '喜好二選一 — 玩法說明',
   rulesSeoDesc: '房間怎麼開、題目怎麼選、分組是怎麼算出來的。',
 
@@ -19,7 +20,8 @@ export default {
   langSwitchLabel: '切換語言',
   themeToggleLabel: '切換深淺色',
 
-  heroTitle: '幾道題，找出誰跟你最像',
+  heroTitle:
+    '矛盾二選一：破冰不冷場，聊出共同點',
   heroDesc:
     '每題限時作答，選同意或不同意。全部答完後自動分組，並告訴你這組有哪些話題可以聊。',
 

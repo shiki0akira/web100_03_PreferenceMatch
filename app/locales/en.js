@@ -2,9 +2,10 @@ export default {
   htmlLang: 'en',
   ogLocale: 'en_US',
 
-  seoTitle: 'This or That — an O/X preference matching icebreaker',
+  seoTitle:
+    'This or That Icebreaker | Agree/disagree questions that group people by what they share',
   seoDesc:
-    'Everyone answers a run of agree/disagree questions on their own phone. When it ends, the room is split into groups of people who answered alike, with the topics they can talk about. No download, no sign-up — just scan a QR code.',
+    'An icebreaker game for parties, small groups and team events. Everyone answers a run of this-or-that agree/disagree questions on their own phone, then the room is grouped by who answered alike — with the topics each group can talk about. No download, no sign-up, just scan a QR code.',
   rulesSeoTitle: 'This or That — how to play',
   rulesSeoDesc: 'How to open a room, pick questions, and how the grouping is worked out.',
 
@@ -13,7 +14,8 @@ export default {
   langSwitchLabel: 'Change language',
   themeToggleLabel: 'Toggle light and dark',
 
-  heroTitle: 'A handful of questions to find who is most like you',
+  heroTitle:
+    'This or that: break the ice and find what you have in common',
   heroDesc:
     'Each question is timed — agree or disagree. When everyone is done, the room is split into groups, with the topics each group can talk about.',
 

@@ -2,9 +2,10 @@ export default {
   htmlLang: 'es',
   ogLocale: 'es_ES',
 
-  seoTitle: 'Esto o aquello — juego de afinidad sí/no para romper el hielo',
+  seoTitle:
+    'Rompehielos «esto o aquello» | Preguntas de sí/no que agrupan por lo que compartís',
   seoDesc:
-    'Cada persona responde desde su móvil una tanda de preguntas de acuerdo/desacuerdo. Al terminar, la sala se reparte automáticamente en grupos con respuestas parecidas, con temas de los que hablar. Sin descargas ni registro: basta con escanear un QR.',
+    'Un juego rompehielos para fiestas, grupos pequeños y eventos de equipo. Cada persona responde desde su móvil una tanda de preguntas de esto-o-aquello, y al terminar la sala se reparte según quién respondió parecido, con temas de los que hablar. Sin descargas ni registro: basta con escanear un QR.',
   rulesSeoTitle: 'Esto o aquello — cómo se juega',
   rulesSeoDesc: 'Cómo abrir una sala, elegir preguntas y cómo se calculan los grupos.',
 
@@ -13,7 +14,8 @@ export default {
   langSwitchLabel: 'Cambiar de idioma',
   themeToggleLabel: 'Cambiar entre claro y oscuro',
 
-  heroTitle: 'Unas cuantas preguntas para encontrar a quien más se te parece',
+  heroTitle:
+    '¿Esto o aquello? Rompe el hielo y encuentra lo que tenéis en común',
   heroDesc:
     'Cada pregunta va con tiempo: de acuerdo o en desacuerdo. Al final se forman los grupos solos, con los temas de los que podéis hablar.',
 

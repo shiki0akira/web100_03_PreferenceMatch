@@ -2,9 +2,10 @@ export default {
   htmlLang: 'fr',
   ogLocale: 'fr_FR',
 
-  seoTitle: 'Plutôt ceci ou cela — brise-glace de correspondance oui/non',
+  seoTitle:
+    'Brise-glace « ceci ou cela » | Des questions oui/non qui révèlent vos points communs',
   seoDesc:
-    "Chacun répond sur son téléphone à une série de questions d'accord/pas d'accord. À la fin, le groupe est réparti automatiquement entre celles et ceux qui ont répondu pareil, avec des sujets de conversation à la clé. Sans installation ni inscription : il suffit de scanner un QR code.",
+    'Un jeu brise-glace pour les soirées, les petits groupes et les événements d’équipe. Chacun répond sur son téléphone à une série de questions « ceci ou cela », puis le groupe est réparti selon les réponses semblables, avec des sujets de conversation à la clé. Sans installation ni inscription : scannez un QR code.',
   rulesSeoTitle: 'Plutôt ceci ou cela — comment jouer',
   rulesSeoDesc: 'Comment ouvrir un salon, choisir les questions et comment les groupes sont calculés.',
 
@@ -13,7 +14,8 @@ export default {
   langSwitchLabel: 'Changer de langue',
   themeToggleLabel: 'Basculer clair et sombre',
 
-  heroTitle: 'Quelques questions pour trouver qui vous ressemble le plus',
+  heroTitle:
+    'Ceci ou cela : brisez la glace et trouvez vos points communs',
   heroDesc:
     'Chaque question est chronométrée : d’accord ou pas d’accord. À la fin, les groupes se forment tout seuls, avec les sujets dont vous pouvez parler.',
 
