@@ -1,6 +1,6 @@
 # 喜好二選一（Web100 系列第三個專案）
 
-> 狀態：**已上線到 workers.dev**，正式網域還沒接。這份文件記玩法與決定，實作細節在各檔案的註解裡。
+> 狀態：**已正式上線**（https://www.vibeweb100.com/match/）。這份文件記玩法與決定，實作細節在各檔案的註解裡。
 > 系列整體架構（子路徑策略、網址結構、共用 design tokens、repo 命名）在 `web100_00_Homepage/ARCHITECTURE.md`。
 
 ## 一句話簡介
@@ -149,9 +149,14 @@ O/X 偏好配對破冰遊戲：大家用手機各自對一系列「同意／不�
 
 ## 部署狀態
 
-- repo 名稱 `web100_03_PreferenceMatch`、網址代號 `/match/` **已定案並上線**，之後要改就得處理轉址
-- 已部署：`https://web100-03-preference-match.shiki0akira.workers.dev/match/`
-- **還沒做**（`ARCHITECTURE.md` 第 10 節檢查清單的第 5～7 步）：
-  - 首頁 repo 的 `vercel.json` 加 `/match/*` 轉發 —— 少了這步 `vibeweb100.com/match/` 會是 404
-  - `ARCHITECTURE.md` 第 9 節的進度追蹤表
-  - 首頁 `README.md` 的專案一覽
+**已正式上線**：（8 種語言）
+
+- repo 、網址代號  已定案，之後要改就得處理轉址
+- Worker：- 接法同搶答：**網頁走 Vercel rewrite 代理，API 與 WebSocket 由客戶端直連 Worker**
+  （Vercel 代理外部網址時對 WebSocket 升級的支援不可靠）。判斷在  的 - 首頁已加第三張卡片、robots.txt 已列 match-sitemap.xml、ARCHITECTURE 進度表與 README 已更新
+
+### 還沒做
+
+- **GA4 還沒接**：事件已經在程式裡（ 前綴），但還沒對照搶答那樣確認資料有進來
+- 把玩法頁寫厚（帶團經驗、題目怎麼挑、幾人最適合）——首頁專案 2026/8 遭演算法降權後，
+  剩下沒做的就是內容深度
