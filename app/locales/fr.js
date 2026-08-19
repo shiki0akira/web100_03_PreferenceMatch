@@ -20,6 +20,8 @@ export default {
   createHeading: 'Ouvrir un salon',
   questionsLabel: 'Questions',
   questionsHint: '8 à 10, c’est l’idéal. Elles ne changent plus une fois la partie lancée.',
+  setupDoneButton: 'Prêt — générer le code',
+  editQuestionsButton: 'Modifier les questions',
   selectedHeading: 'Sélectionnées',
   emptySelected: 'Rien de sélectionné.',
   selectedCount: '{n} sélectionnées',

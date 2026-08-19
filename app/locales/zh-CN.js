@@ -19,6 +19,8 @@ export default {
   createHeading: '开一个房间',
   questionsLabel: '出题',
   questionsHint: '建议 8～10 题。题目在开始后就不能改了。',
+  setupDoneButton: '出好了，生成房号',
+  editQuestionsButton: '改题目',
   selectedHeading: '已选题目',
   emptySelected: '还没选任何题目。',
   selectedCount: '已选 {n} 题',

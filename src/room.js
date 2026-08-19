@@ -509,6 +509,9 @@ function publicState(room, online) {
     question: question ? { id: question.id, text: question.text } : null,
     // 剩餘毫秒數而不是絕對時刻：客戶端不需要跟伺服器對時，中途連上來的人也拿得到正確的剩餘時間
     remainingMs: room.deadline ? Math.max(0, room.deadline - Date.now()) : 0,
+    // 每題總長也送下來，讓進度條有個固定的分母。前端如果拿收到當下的 remainingMs
+    // 當分母，每收到一次廣播（有人作答就會有一次）進度條就會跳回滿格
+    questionMs: QUESTION_MS,
     hostOnline: online.has(room.hostId),
     players: Object.entries(room.players)
       .sort((a, b) => a[1].joinedAt - b[1].joinedAt)

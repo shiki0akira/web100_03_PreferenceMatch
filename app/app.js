@@ -59,6 +59,8 @@
     resultsReported: false,
     // 主持人的選題只從伺服器同步一次，之後以本機為準（見 syncSettingsOnce）
     settingsSynced: false,
+    // 主持人是否已按過「出好了」。存在 sessionStorage，重整不會被打回出題那一步
+    setupDone: false,
     // 建房畫面的選題狀態
     selected: [],
     custom: [],
@@ -97,7 +99,7 @@
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
       'role-badge', 'exit-room', 'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
-      'setup-card', 'lobby-card', 'player-count', 'player-list', 'player-empty',
+      'setup-card', 'setup-done', 'setup-error', 'edit-questions', 'lobby-card', 'player-count', 'player-list', 'player-empty',
       'start-game-block', 'start-game', 'start-game-error', 'waiting-hint',
       'question-card', 'question-progress', 'countdown', 'timer-fill', 'question-text',
       'ox-buttons', 'answer-o', 'answer-x', 'answer-hint',
@@ -379,6 +381,8 @@
     el.groupSize.addEventListener('change', sendSettings);
     el.hostPlays.addEventListener('change', sendSettings);
 
+    el.setupDone.addEventListener('click', finishSetup);
+    el.editQuestions.addEventListener('click', editQuestions);
     el.copyLink.addEventListener('click', copyShareLink);
     el.startGame.addEventListener('click', startGame);
     el.nextQuestion.addEventListener('click', function () {
@@ -479,6 +483,51 @@
       groupSize: Number(el.groupSize.value) || 4,
       hostPlays: el.hostPlays.checked,
     });
+  }
+
+  /*
+   * 「出好了，產生房號」。
+   *
+   * 存進 sessionStorage 而不是只放記憶體：主持人重整之後不該被打回出題那一步
+   * （題目本來就從伺服器還原得回來，卻要他再按一次「出好了」很莫名）。
+   * 用 sessionStorage 不用 localStorage——這是「這一場」的進度，不是長期偏好。
+   */
+  function finishSetup() {
+    hideError(el.setupError);
+    var total = state.selected.length + state.custom.length;
+    if (total < MIN_QUESTIONS) return showError(el.setupError, t('errNoQuestions'));
+    if (total > MAX_QUESTIONS) return showError(el.setupError, t('errTooManyQuestions'));
+
+    state.setupDone = true;
+    writeSetupDone(true);
+    renderRoom();
+  }
+
+  function editQuestions() {
+    state.setupDone = false;
+    writeSetupDone(false);
+    renderRoom();
+  }
+
+  function setupDoneKey() {
+    return 'web100-match-setup-' + state.code;
+  }
+
+  function writeSetupDone(done) {
+    try {
+      if (done) sessionStorage.setItem(setupDoneKey(), '1');
+      else sessionStorage.removeItem(setupDoneKey());
+    } catch (e) {
+      /* 無痕模式：重整會回到出題那一步，但這一場照樣能玩 */
+    }
+  }
+
+  function readSetupDone() {
+    try {
+      return sessionStorage.getItem(setupDoneKey()) === '1';
+    } catch (e) {
+      return false;
+    }
   }
 
   function startGame() {
@@ -585,6 +634,7 @@
         track('match_player_joined');
         state.joinReported = true;
       }
+      state.setupDone = readSetupDone();
       showView('room');
       return;
     }
@@ -643,10 +693,17 @@
      * 每張卡片的顯示與否**全部**在這裡決定，不要散到各自的 render 函式裡。
      * 選題卡原本只在 renderLobby() 設 hidden，一離開大廳就沒人再管它，
      * 結果整場遊戲跟結算頁都還掛著。
+     *
+     * 主持人的大廳分兩步：先出題（setupStep），按下「出好了」才顯示房號與成員。
+     * 一開始就把房號攤開的話，主持人還在挑題目就有人掃碼進來等，
+     * 而且畫面上三張卡片一起出現，第一次用的人不知道該先看哪個。
+     * 玩家沒有這一步，進來就是房號與成員。
      */
-    el.shareCard.hidden = !inLobby;
-    el.setupCard.hidden = !(inLobby && isHost);
-    el.lobbyCard.hidden = !inLobby;
+    var setupStep = inLobby && isHost && !state.setupDone;
+
+    el.setupCard.hidden = !setupStep;
+    el.shareCard.hidden = !inLobby || setupStep;
+    el.lobbyCard.hidden = !inLobby || setupStep;
     el.questionCard.hidden = inLobby || inResults;
     el.resultsCard.hidden = !inResults;
 
@@ -814,7 +871,14 @@
 
     // 換算成本機時刻之後就自己跑，不用每一幀都問伺服器，也不用跟伺服器對時
     state.deadlineAt = Date.now() + room.remainingMs;
-    var total = room.remainingMs;
+
+    /*
+     * 分母用伺服器給的「每題總長」，**不要**用收到當下的 remainingMs。
+     *
+     * 每有一個人作答就會廣播一次 state，這裡也就跟著重跑一次。拿當下的剩餘時間當分母的話，
+     * 每次廣播進度條都會跳回滿格再重新縮——看起來就像倒數被人按了重置。
+     */
+    var total = room.questionMs || 10000;
 
     (function tick() {
       var left = Math.max(0, state.deadlineAt - Date.now());

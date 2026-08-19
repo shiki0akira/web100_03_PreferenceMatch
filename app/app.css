@@ -41,6 +41,10 @@ html.light {
   --btn-disabled-face: var(--secondary-200);
   --btn-disabled-text: var(--secondary-800);
 
+  /* switch 關閉時的軌道。--color-outline 在深色模式是 primary-400（很淺），
+     跟開啟時的 accent 太接近、白滑塊也壓不住，所以兩個主題各指定一個中深色 */
+  --switch-off: var(--secondary-800);
+
   color-scheme: light;
 }
 
@@ -52,6 +56,7 @@ html.light {
   --btn-text: #ffffff;
   --btn-disabled-face: var(--primary-800);
   --btn-disabled-text: var(--primary-400);
+  --switch-off: var(--primary-800);
 
   color-scheme: dark;
 }
@@ -1021,26 +1026,44 @@ textarea.field {
   line-height: 1;
 }
 
+/* 加粗：已選那顆是白字疊在 --btn-face 上，量出來 4.34:1，
+   對一般字級差一點才到 AA 的 4.5，加粗把可讀性補回來 */
+.ox-word {
+  font-weight: 700;
+}
+
 .ox-button:hover:not(:disabled) {
   border-color: var(--color-outline-hover);
 }
 
+/*
+ * disabled 照 ARCHITECTURE.md 第 7 節的「壓扁」語言：換成色階裡淺兩階的底，
+ * 但**文字要保持清楚可讀**——選項本身仍是有用資訊，不能淡化到看不清楚
+ * （深色 Primary/400 on Primary/800、淺色 Secondary/800 on Secondary/200，都是 4.62:1）。
+ * 只改文字顏色而不換底色的話，淺紫的字會落在近乎透明的卡片底上，糊成一片。
+ */
 .ox-button:disabled {
   cursor: default;
   opacity: 1;
+  background: var(--btn-disabled-face);
+  border-color: transparent;
   color: var(--btn-disabled-text);
-  border-color: var(--color-border);
 }
 
-/* 選中的那顆填滿，另一顆維持線框——低頭看一眼就知道自己選了哪邊 */
-.ox-button.chosen {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-accent-text);
-}
-
+/*
+ * 選中的那顆填滿，另一顆維持線框——低頭看一眼就知道自己選了哪邊。
+ *
+ * 用實心按鈕那組 --btn-face / --btn-text，不要用 --color-accent + --color-accent-text：
+ * accent-text 是設計給「深色背景上的文字」，疊在 accent 填底上對比只有 2.5:1，字會糊掉。
+ * 這一組是設計系統裡已經配好對比的組合。
+ *
+ * 放在 :disabled 之後：兩者特異性相同，靠順序決勝——時間到之後仍要看得出自己選了哪邊。
+ */
+.ox-button.chosen,
 .ox-button.chosen:disabled {
-  color: var(--color-accent-text);
+  background: var(--btn-face);
+  border-color: var(--btn-edge);
+  color: var(--btn-text);
 }
 
 /* ---------- 統計 ---------- */
@@ -1332,7 +1355,8 @@ textarea.field {
   height: 24px;
   margin: 0;
   border-radius: var(--radius-pill);
-  background: var(--color-border);
+  /* 關閉時的軌道要**不透明**，而且要跟開啟時的 accent 明顯不同色階 */
+  background: var(--switch-off);
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -1345,7 +1369,10 @@ textarea.field {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--color-bg-card);
+  /* 不能用 --color-bg-card：深色模式下它是 rgba(255,255,255,0.04)，
+     4% 白等於透明，滑塊會整顆消失，開關看起來只是一顆純色藥丸。
+     --color-bg-light 兩個主題都是不透明白，疊在深淺兩種軌道上都看得見 */
+  background: var(--color-bg-light);
   transition: transform 0.15s ease;
 }
 

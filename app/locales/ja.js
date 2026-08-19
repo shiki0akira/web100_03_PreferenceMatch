@@ -20,6 +20,8 @@ export default {
   createHeading: 'ルームを作る',
   questionsLabel: '質問',
   questionsHint: '8〜10問がちょうどいい。開始後は質問を変更できません。',
+  setupDoneButton: '質問はこれでOK、コードを出す',
+  editQuestionsButton: '質問を変える',
   selectedHeading: '選んだ質問',
   emptySelected: 'まだ何も選んでいません。',
   selectedCount: '{n}問選択',

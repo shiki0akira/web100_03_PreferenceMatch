@@ -20,6 +20,8 @@ export default {
   createHeading: 'Raum öffnen',
   questionsLabel: 'Fragen',
   questionsHint: '8 bis 10 passen am besten. Nach dem Start lassen sie sich nicht mehr ändern.',
+  setupDoneButton: 'Fertig — Raumcode erzeugen',
+  editQuestionsButton: 'Fragen ändern',
   selectedHeading: 'Ausgewählt',
   emptySelected: 'Noch nichts ausgewählt.',
   selectedCount: '{n} ausgewählt',

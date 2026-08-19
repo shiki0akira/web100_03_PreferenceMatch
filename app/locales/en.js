@@ -20,6 +20,8 @@ export default {
   createHeading: 'Open a room',
   questionsLabel: 'Questions',
   questionsHint: '8 to 10 works best. Questions are locked once the game starts.',
+  setupDoneButton: 'Done — get the room code',
+  editQuestionsButton: 'Edit questions',
   selectedHeading: 'Chosen',
   emptySelected: 'Nothing chosen yet.',
   selectedCount: '{n} selected',
