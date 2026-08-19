@@ -24,6 +24,8 @@ export default {
   saveQuestionsButton: '完了',
   editQuestionsButton: '質問を変える',
   selectedHeading: '選んだ質問',
+  randomButton: 'ランダム',
+  backToRoomButton: 'ルームに戻る',
   emptySelected: 'まだ何も選んでいません。',
   selectedCount: '{n}問選択',
   customLabel: '自分で質問を作る',

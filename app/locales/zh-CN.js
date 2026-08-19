@@ -23,6 +23,8 @@ export default {
   saveQuestionsButton: '完成',
   editQuestionsButton: '改题目',
   selectedHeading: '已选题目',
+  randomButton: '随机',
+  backToRoomButton: '回到房间',
   emptySelected: '还没选任何题目。',
   selectedCount: '已选 {n} 题',
   customLabel: '自己出题',

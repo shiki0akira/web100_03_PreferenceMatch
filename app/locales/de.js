@@ -24,6 +24,8 @@ export default {
   saveQuestionsButton: 'Fertig',
   editQuestionsButton: 'Fragen ändern',
   selectedHeading: 'Ausgewählt',
+  randomButton: 'Zufall',
+  backToRoomButton: 'Zurück in den Raum',
   emptySelected: 'Noch nichts ausgewählt.',
   selectedCount: '{n} ausgewählt',
   customLabel: 'Eigene Frage',

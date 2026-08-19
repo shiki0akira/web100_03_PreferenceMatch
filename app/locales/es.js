@@ -24,6 +24,8 @@ export default {
   saveQuestionsButton: 'Listo',
   editQuestionsButton: 'Editar preguntas',
   selectedHeading: 'Seleccionadas',
+  randomButton: 'Aleatorio',
+  backToRoomButton: 'Volver a la sala',
   emptySelected: 'Todavía no has elegido nada.',
   selectedCount: '{n} seleccionadas',
   customLabel: 'Tu propia pregunta',

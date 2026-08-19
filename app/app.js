@@ -26,6 +26,8 @@
 
   var MIN_QUESTIONS = 1;
   var MAX_QUESTIONS = 20;
+  // 「隨機」一次抽幾題，跟預設題數一致
+  var RANDOM_COUNT = 10;
   var URGENT_MS = 3000;
 
   // 分類標題的展開箭頭。<details> 沒有預設的視覺提示，光看標題不知道還有沒有東西可以展開；
@@ -92,7 +94,7 @@
     var ids = [
       'view-home', 'view-setup', 'view-join', 'view-room', 'view-error',
       'category-list', 'selected-count', 'custom-input', 'custom-add',
-      'selected-list', 'selected-empty',
+      'selected-list', 'selected-empty', 'random-pick',
       'max-players', 'group-size', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
@@ -105,7 +107,7 @@
       'tally', 'tally-o-count', 'tally-o-list', 'tally-x-count', 'tally-x-list',
       'next-question',
       'results-card', 'my-group-card', 'my-group-members', 'my-group-topics', 'my-group-empty',
-      'all-groups', 'all-groups-heading',
+      'all-groups', 'all-groups-heading', 'back-to-room',
       'error-title', 'error-desc', 'conn-banner',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -204,23 +206,30 @@
     for (var i = 0; i < BANK.categories.length; i += 1) {
       var category = BANK.categories[i];
       var questions = questionsIn(category);
-      var open = BANK.defaultCategories.indexOf(category) >= 0;
 
+      /*
+       * 「全選」放在標題列（summary）裡，不放展開後的第一行——收合狀態下也要能整類勾掉，
+       * 不然主持人得先展開五題才能全選。點它時要擋掉 <summary> 的展開行為，
+       * 見 bindEvents 裡的 data-all 處理。
+       *
+       * 分類一律不預設展開：七類全開會讓人一進來就面對三十幾個 checkbox。
+       */
       html +=
-        '<details class="cat" data-category="' + category + '"' + (open ? ' open' : '') + '>' +
-        '<summary>' + CHEVRON + escapeHtml(t('category' + capitalize(category))) +
+        '<details class="cat" data-category="' + category + '">' +
+        '<summary>' + CHEVRON +
+        '<span class="cat-name">' + escapeHtml(t('category' + capitalize(category))) + '</span>' +
+        '<span class="cat-all"><input type="checkbox" data-all="' + category + '" />' +
+        '<span>' + escapeHtml(t('categorySelectAll')) + '</span></span>' +
         '<span class="cat-count" data-count="' + category + '"></span></summary>' +
-        '<label class="check-row cat-all"><input type="checkbox" data-all="' + category + '" />' +
-        '<span>' + escapeHtml(t('categorySelectAll')) + '</span></label>' +
         '<ul class="q-list">';
 
       for (var j = 0; j < questions.length; j += 1) {
         var question = questions[j];
-        var checked = open ? ' checked' : '';
+        var checked = BANK.defaultQuestions.indexOf(question.id) >= 0;
         if (checked) state.selected.push(question.id);
         html +=
           '<li><label class="check-row"><input type="checkbox" data-question="' +
-          escapeHtml(question.id) + '"' + checked + ' />' +
+          escapeHtml(question.id) + '"' + (checked ? ' checked' : '') + ' />' +
           '<span>' + escapeHtml(question.text) + '</span></label></li>';
       }
       html += '</ul></details>';
@@ -336,6 +345,28 @@
 
   function bindEvents() {
     el.categoryList.addEventListener('change', onQuestionToggle);
+
+    /*
+     * 「全選」在 <summary> 裡，點它會順便把分類展開／收合，這不是我們要的。
+     *
+     * 不能用 preventDefault()：checkbox 的勾選在 click 派發**之前**就先做掉了，
+     * preventDefault 會把它一起還原，手動翻回來又會變成翻兩次（勾 2/5 反而全部清空）。
+     * 改成讓 checkbox 照常運作，事後把 details.open 設回原值——展開行為同樣發生在
+     * 事件派發之後，所以要排到下一個 tick 才蓋得掉。
+     */
+    el.categoryList.addEventListener('click', function (event) {
+      if (!event.target.closest('.cat-all')) return;
+      var details = event.target.closest('details');
+      var wasOpen = details.open;
+      setTimeout(function () {
+        details.open = wasOpen;
+      }, 0);
+    });
+
+    el.randomPick.addEventListener('click', randomPick);
+    el.backToRoom.addEventListener('click', function () {
+      send({ t: 'reset' });
+    });
     el.customAdd.addEventListener('click', addCustomQuestion);
     el.customInput.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') {
@@ -355,7 +386,7 @@
       if (!unselect) return;
       var id = unselect.dataset.unselect;
       setSelected(id, false);
-      var box = el.categoryList.querySelector('[data-question=\"' + id + '\"]');
+      var box = el.categoryList.querySelector('[data-question="' + id + '"]');
       if (box) box.checked = false;
       updateSelectedCount();
       renderSelectedListOnly();
@@ -406,19 +437,53 @@
   function onQuestionToggle(event) {
     var box = event.target;
 
-    if (box.dataset.all) {
-      var questions = questionsIn(box.dataset.all);
-      for (var i = 0; i < questions.length; i += 1) {
-        setSelected(questions[i].id, box.checked);
-        var one = el.categoryList.querySelector('[data-question="' + questions[i].id + '"]');
-        if (one) one.checked = box.checked;
-      }
-    } else if (box.dataset.question) {
-      setSelected(box.dataset.question, box.checked);
+    if (box.dataset.all) return applyCategoryAll(box);
+    if (!box.dataset.question) return;
+
+    setSelected(box.dataset.question, box.checked);
+    afterSelectionChanged();
+  }
+
+  function applyCategoryAll(box) {
+    var questions = questionsIn(box.dataset.all);
+    for (var i = 0; i < questions.length; i += 1) {
+      setSelected(questions[i].id, box.checked);
+      var one = el.categoryList.querySelector('[data-question="' + questions[i].id + '"]');
+      if (one) one.checked = box.checked;
     }
+    afterSelectionChanged();
+  }
+
+  function afterSelectionChanged() {
     updateSelectedCount();
     renderSelectedListOnly();
     sendSettings();
+  }
+
+  /*
+   * 隨機挑 10 題。整份題庫抽，不限分類——預設那 10 題是我挑的「最會讓全場分兩半」的組合，
+   * 主持人想換個口味時應該抽得到冷門分類的題目。
+   *
+   * 只換內建題，不動自訂題：自訂題是主持人自己打的，被隨機洗掉會很惱人。
+   */
+  function randomPick() {
+    var pool = BANK.list.slice();
+    for (var i = pool.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var swap = pool[i];
+      pool[i] = pool[j];
+      pool[j] = swap;
+    }
+
+    state.selected = pool.slice(0, RANDOM_COUNT).map(function (question) {
+      return question.id;
+    });
+
+    var boxes = el.categoryList.querySelectorAll('[data-question]');
+    for (var k = 0; k < boxes.length; k += 1) {
+      boxes[k].checked = state.selected.indexOf(boxes[k].dataset.question) >= 0;
+    }
+    afterSelectionChanged();
   }
 
   function setSelected(id, on) {
@@ -625,6 +690,10 @@
     }
 
     if (msg.t === 'state') {
+      // 回到大廳＝新的一輪，把只該送一次的旗標放掉
+      if (msg.state.status === 'lobby' && state.room && state.room.status === 'results') {
+        state.resultsReported = false;
+      }
       state.room = msg.state;
       renderRoom();
       return;
@@ -876,6 +945,8 @@
   function renderResults(room) {
     var result = room.result;
     if (!result) return;
+
+    el.backToRoom.hidden = state.role !== 'host';
 
     if (!state.resultsReported) {
       track('match_results_shown', { player_count: room.players.length });

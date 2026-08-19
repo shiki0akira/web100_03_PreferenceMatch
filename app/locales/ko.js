@@ -24,6 +24,8 @@ export default {
   saveQuestionsButton: '완료',
   editQuestionsButton: '문항 수정',
   selectedHeading: '선택한 문항',
+  randomButton: '무작위',
+  backToRoomButton: '방으로 돌아가기',
   emptySelected: '아직 아무것도 고르지 않았습니다.',
   selectedCount: '{n}문항 선택됨',
   customLabel: '직접 문항 만들기',

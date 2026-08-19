@@ -165,6 +165,8 @@ export class MatchRoom {
         return this.handleSettings(ws, room, who, msg);
       case 'startGame':
         return this.handleStartGame(ws, room, who);
+      case 'reset':
+        return this.handleReset(ws, room, who);
       case 'answer':
         return this.handleAnswer(ws, room, who, msg);
       case 'next':
@@ -260,6 +262,27 @@ export class MatchRoom {
       }
     }
     if (msg.hostPlays !== undefined) room.hostPlays = Boolean(msg.hostPlays);
+
+    await this.saveRoom({ touch: true });
+    this.broadcast(room);
+  }
+
+  /*
+   * 主持人在結算頁按「回到房間」：把房間退回大廳，同一批人可以再玩一輪。
+   *
+   * 保留成員與題目，只清掉答案與分組結果——重點是**把 started 放掉**，
+   * 剛剛沒趕上的人這時可以加進來。要換題目的話回大廳按「改題目」就好。
+   */
+  async handleReset(ws, room, who) {
+    if (who.role !== 'host') return this.sendError(ws, 'host_only');
+    if (room.status !== 'results') return this.sendError(ws, 'not_results');
+
+    room.status = 'lobby';
+    room.started = false;
+    room.index = -1;
+    room.deadline = null;
+    room.answers = {};
+    room.result = null;
 
     await this.saveRoom({ touch: true });
     this.broadcast(room);

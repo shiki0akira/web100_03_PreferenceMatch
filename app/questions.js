@@ -24,11 +24,24 @@ export const CATEGORIES = [
 ];
 
 /*
- * 一般朋友聚會的預設勾選：兩類剛好 10 題，落在建議的 8～10 題裡。
- * 三類會變成 15 題，跟畫面上的「建議 8～10 題」自打嘴巴，主持人還得自己回頭取消勾選。
- * 小組破冰要主持人自己挑，不然一般場合會很突兀。
+ * 預設勾選：七個分類各挑一到兩題，湊 10 題（落在建議的 8～10 題裡）。
+ *
+ * 挑的是每類裡最會讓全場分成兩半的題目——九成人都選同一邊的題目對分組毫無貢獻，
+ * 放進預設只是浪費 10 秒。分類本身**不預設展開**：七類全開會讓主持人一進來就面對
+ * 三十幾個 checkbox，右邊的「已選題目」才是他該先看的東西。
  */
-export const DEFAULT_CATEGORIES = ['life', 'food'];
+export const DEFAULT_QUESTION_IDS = [
+  'life.morning',
+  'life.phone',
+  'food.pineapple',
+  'food.taro',
+  'leisure.horror',
+  'leisure.karaoke',
+  'personality.spontaneous',
+  'social.splitbill',
+  'belief.saving',
+  'smallgroup.crowd',
+];
 
 export const QUESTIONS = [
   // ── 生活習慣 ──────────────────────────────────────────────

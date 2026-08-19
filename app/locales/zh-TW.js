@@ -30,6 +30,8 @@ export default {
   saveQuestionsButton: '完成',
   editQuestionsButton: '改題目',
   selectedHeading: '已選題目',
+  randomButton: '隨機',
+  backToRoomButton: '回到房間',
   emptySelected: '還沒選任何題目。',
   selectedCount: '已選 {n} 題',
   customLabel: '自己出題',

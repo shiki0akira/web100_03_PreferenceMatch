@@ -23,7 +23,7 @@ import {
   BASE_PATH,
   PROJECT_ID,
 } from '../app/strings.js';
-import { QUESTIONS, CATEGORIES, DEFAULT_CATEGORIES, checkQuestions } from '../app/questions.js';
+import { QUESTIONS, CATEGORIES, DEFAULT_QUESTION_IDS, checkQuestions } from '../app/questions.js';
 import { AVATARS } from '../app/avatars.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -172,7 +172,7 @@ function tokensFor(lang, page) {
 function questionsFor(lang) {
   return {
     categories: CATEGORIES,
-    defaultCategories: DEFAULT_CATEGORIES,
+    defaultQuestions: DEFAULT_QUESTION_IDS,
     list: QUESTIONS.map((question) => ({
       id: question.id,
       category: question.category,
