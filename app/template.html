@@ -101,29 +101,41 @@
           <div class="qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
         </section>
 
-        <!-- 選題與其他設定：只有主持人看得到，只有大廳階段能改 -->
+        <!-- 出題與其他設定：只有主持人看得到，只有大廳階段能改 -->
         <section class="surface" id="setup-card" hidden>
           <div class="section-head">
             <h2>{{questionsLabel}}</h2>
             <span class="counter" id="selected-count"></span>
           </div>
-          <!-- 分類用原生 <details>：展開收合不用寫 JS，手機上也不會一次列 35 題 -->
-          <div id="category-list"></div>
 
-          <label class="field-label" for="custom-input">{{customLabel}}</label>
-          <div class="row">
-            <input
-              class="field"
-              id="custom-input"
-              type="text"
-              maxlength="120"
-              autocomplete="off"
-              placeholder="{{customPlaceholder}}"
-            />
-            <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+          <!-- 左邊挑題、右邊看已選的。左邊會很長（7 類 35 題），
+               右邊固定在視線內才知道自己現在到底出了幾題、是哪幾題 -->
+          <div class="setup-cols">
+            <div class="setup-pick">
+              <!-- 分類用原生 <details>：展開收合不用寫 JS，手機上也不會一次列 35 題 -->
+              <div id="category-list"></div>
+
+              <label class="field-label" for="custom-input">{{customLabel}}</label>
+              <div class="row">
+                <input
+                  class="field"
+                  id="custom-input"
+                  type="text"
+                  maxlength="120"
+                  autocomplete="off"
+                  placeholder="{{customPlaceholder}}"
+                />
+                <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+              </div>
+              <p class="hint">{{questionsHint}}</p>
+            </div>
+
+            <div class="setup-chosen">
+              <h3 class="chosen-heading">{{selectedHeading}}</h3>
+              <ul class="chosen-list" id="selected-list"></ul>
+              <p class="empty" id="selected-empty">{{emptySelected}}</p>
+            </div>
           </div>
-          <ul class="custom-list" id="custom-list"></ul>
-          <p class="hint">{{questionsHint}}</p>
 
           <details class="advanced">
             <summary>{{advancedSummary}}</summary>
@@ -141,9 +153,11 @@
             />
             <p class="hint">{{groupSizeHint}}</p>
 
-            <label class="check-row">
-              <input type="checkbox" id="host-plays" />
+            <!-- switch：開關類的設定用 checkbox 打勾看起來像「待辦事項」，
+                 用 switch 才讀得出來是「開著／關著」的狀態 -->
+            <label class="switch-row">
               <span>{{hostPlaysLabel}}</span>
+              <input class="switch" type="checkbox" id="host-plays" checked />
             </label>
             <p class="hint">{{hostPlaysHint}}</p>
           </details>

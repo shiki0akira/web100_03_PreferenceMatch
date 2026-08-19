@@ -18,8 +18,10 @@ export default {
     'Zehn Sekunden pro Frage, zustimmen oder ablehnen. Danach werden automatisch Gruppen gebildet, samt Themen, über die ihr reden könnt.',
 
   createHeading: 'Raum öffnen',
-  questionsLabel: 'Fragen auswählen',
+  questionsLabel: 'Fragen',
   questionsHint: '8 bis 10 passen am besten. Nach dem Start lassen sie sich nicht mehr ändern.',
+  selectedHeading: 'Ausgewählt',
+  emptySelected: 'Noch nichts ausgewählt.',
   selectedCount: '{n} ausgewählt',
   customLabel: 'Eigene Frage',
   customPlaceholder: 'z. B. Zum Frühstück muss etwas Warmes dabei sein',
@@ -41,7 +43,7 @@ export default {
   groupSizeLabel: 'Personen pro Gruppe',
   groupSizeHint:
     '3 bis 5. Unter 6 Personen wird nicht aufgeteilt — dann gibt es stattdessen Paare.',
-  hostPlaysLabel: 'Ich beantworte auch mit',
+  hostPlaysLabel: 'Moderation macht mit',
   hostPlaysHint: 'Ausschalten, wenn du nur moderieren und nicht eingeteilt werden willst.',
   createButton: 'Raum erstellen',
 

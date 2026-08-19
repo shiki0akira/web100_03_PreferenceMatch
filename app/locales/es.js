@@ -18,8 +18,10 @@ export default {
     'Diez segundos por pregunta: de acuerdo o en desacuerdo. Al final se forman los grupos solos, con los temas de los que podéis hablar.',
 
   createHeading: 'Abrir una sala',
-  questionsLabel: 'Elegir preguntas',
+  questionsLabel: 'Preguntas',
   questionsHint: 'Entre 8 y 10 va mejor. No se pueden cambiar una vez empezada la partida.',
+  selectedHeading: 'Seleccionadas',
+  emptySelected: 'Todavía no has elegido nada.',
   selectedCount: '{n} seleccionadas',
   customLabel: 'Tu propia pregunta',
   customPlaceholder: 'p. ej.: el desayuno tiene que llevar algo caliente',
@@ -40,7 +42,7 @@ export default {
   maxPlayersHint: 'De 2 a 30 personas, sin contar a quien dirige',
   groupSizeLabel: 'Personas por grupo',
   groupSizeHint: 'De 3 a 5. Con menos de 6 no se hacen grupos: salen parejas en su lugar.',
-  hostPlaysLabel: 'Yo también respondo',
+  hostPlaysLabel: 'Quien dirige también responde',
   hostPlaysHint: 'Desactívalo para solo dirigir y quedarte fuera del reparto.',
   createButton: 'Crear sala',
 

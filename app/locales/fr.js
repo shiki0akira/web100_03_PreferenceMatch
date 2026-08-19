@@ -18,8 +18,10 @@ export default {
     "Dix secondes par question : d'accord ou pas d'accord. À la fin, les groupes se forment tout seuls, avec les sujets dont vous pouvez parler.",
 
   createHeading: 'Ouvrir un salon',
-  questionsLabel: 'Choisir les questions',
+  questionsLabel: 'Questions',
   questionsHint: '8 à 10, c’est l’idéal. Elles ne changent plus une fois la partie lancée.',
+  selectedHeading: 'Sélectionnées',
+  emptySelected: 'Rien de sélectionné.',
   selectedCount: '{n} sélectionnées',
   customLabel: 'Votre propre question',
   customPlaceholder: 'ex. : il faut quelque chose de chaud au petit-déjeuner',
@@ -40,7 +42,7 @@ export default {
   maxPlayersHint: 'De 2 à 30 personnes, animation non comprise',
   groupSizeLabel: 'Personnes par groupe',
   groupSizeHint: '3 à 5. En dessous de 6 participants, pas de groupes : des binômes à la place.',
-  hostPlaysLabel: 'Je réponds aussi',
+  hostPlaysLabel: "L'animation répond aussi",
   hostPlaysHint: 'Désactivez pour animer seulement et ne pas être réparti.',
   createButton: 'Créer le salon',
 

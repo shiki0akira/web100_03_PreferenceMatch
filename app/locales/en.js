@@ -18,8 +18,10 @@ export default {
     'Ten seconds a question — agree or disagree. When everyone is done, the room is split into groups, with the topics each group can talk about.',
 
   createHeading: 'Open a room',
-  questionsLabel: 'Pick questions',
+  questionsLabel: 'Questions',
   questionsHint: '8 to 10 works best. Questions are locked once the game starts.',
+  selectedHeading: 'Chosen',
+  emptySelected: 'Nothing chosen yet.',
   selectedCount: '{n} selected',
   customLabel: 'Write your own',
   customPlaceholder: 'e.g. Breakfast has to come with something hot',
@@ -40,7 +42,7 @@ export default {
   maxPlayersHint: '2–30 players, not counting the host',
   groupSizeLabel: 'People per group',
   groupSizeHint: '3 to 5. Under 6 players the room is not split — you get pair matches instead.',
-  hostPlaysLabel: 'I am answering too',
+  hostPlaysLabel: 'Host answers too',
   hostPlaysHint: 'Turn this off to run the room only and stay out of the grouping.',
   createButton: 'Create room',
 

@@ -96,8 +96,8 @@ export class MatchRoom {
       status: 'lobby',
       started: false,
 
-      // 主持人預設只控場、不參與分組。要下場的話在大廳裡自己打開
-      hostPlays: false,
+      // 主持人預設也一起作答、一起被分組。純控場的場合在大廳裡關掉
+      hostPlays: true,
       groupSize: DEFAULT_GROUP_SIZE,
 
       /*

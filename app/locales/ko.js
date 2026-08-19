@@ -18,8 +18,10 @@ export default {
     '한 문항에 10초, 동의인지 비동의인지만 고르세요. 다 끝나면 자동으로 조를 나누고 그 조에서 나눌 이야깃거리까지 알려 줍니다.',
 
   createHeading: '방 만들기',
-  questionsLabel: '문항 고르기',
+  questionsLabel: '문항',
   questionsHint: '8~10문항이 적당합니다. 시작한 뒤에는 문항을 바꿀 수 없습니다.',
+  selectedHeading: '선택한 문항',
+  emptySelected: '아직 아무것도 고르지 않았습니다.',
   selectedCount: '{n}문항 선택됨',
   customLabel: '직접 문항 만들기',
   customPlaceholder: '예: 아침은 따뜻한 게 있어야 한다',
@@ -40,7 +42,7 @@ export default {
   maxPlayersHint: '2~30명, 진행자 본인은 제외',
   groupSizeLabel: '한 조 인원',
   groupSizeHint: '3~5명. 6명 미만이면 조를 나누지 않고 둘씩 궁합만 보여 줍니다.',
-  hostPlaysLabel: '나도 같이 답하기',
+  hostPlaysLabel: '진행자도 함께 답하기',
   hostPlaysHint: '끄면 진행만 맡고 조에는 들어가지 않습니다.',
   createButton: '방 만들기',
 

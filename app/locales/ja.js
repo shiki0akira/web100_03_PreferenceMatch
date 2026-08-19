@@ -18,8 +18,10 @@ export default {
     '1問10秒、賛成か反対かを選ぶだけ。全問終わると自動でグループ分けし、そのグループで話せる話題も出します。',
 
   createHeading: 'ルームを作る',
-  questionsLabel: '質問を選ぶ',
+  questionsLabel: '質問',
   questionsHint: '8〜10問がちょうどいい。開始後は質問を変更できません。',
+  selectedHeading: '選んだ質問',
+  emptySelected: 'まだ何も選んでいません。',
   selectedCount: '{n}問選択',
   customLabel: '自分で質問を作る',
   customPlaceholder: '例：朝ごはんには温かいものが要る',
@@ -40,7 +42,7 @@ export default {
   maxPlayersHint: '2〜30人。進行役自身は含みません',
   groupSizeLabel: '1グループの人数',
   groupSizeHint: '3〜5人。6人未満のときはグループ分けせず、2人ずつの相性を出します。',
-  hostPlaysLabel: '自分も回答する',
+  hostPlaysLabel: '進行役も回答する',
   hostPlaysHint: 'オフにすると進行役に専念し、グループには入りません。',
   createButton: 'ルームを作成',
 

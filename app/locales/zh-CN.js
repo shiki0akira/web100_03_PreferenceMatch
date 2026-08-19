@@ -17,8 +17,10 @@ export default {
   heroDesc: '每题 10 秒，选同意或不同意。全部答完后自动分组，并告诉你这组有哪些话题可以聊。',
 
   createHeading: '开一个房间',
-  questionsLabel: '选题目',
+  questionsLabel: '出题',
   questionsHint: '建议 8～10 题。题目在开始后就不能改了。',
+  selectedHeading: '已选题目',
+  emptySelected: '还没选任何题目。',
   selectedCount: '已选 {n} 题',
   customLabel: '自己出题',
   customPlaceholder: '例如：早餐一定要配热的',
@@ -39,7 +41,7 @@ export default {
   maxPlayersHint: '2～30 人，不含主持人自己',
   groupSizeLabel: '每组几个人',
   groupSizeHint: '3～5 人。人数不足 6 人时不分组，改列两两契合度。',
-  hostPlaysLabel: '我也要一起作答',
+  hostPlaysLabel: '主持人也一起作答',
   hostPlaysHint: '关掉的话你只负责控场，不会被分到组里。',
   createButton: '创建房间',
 

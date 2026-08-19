@@ -4,8 +4,8 @@
  *
  * 兩個重點跟搶答那個專案不一樣：
  *
- * 1. **主持人與玩家共用同一個房間畫面。** 主持人預設只控場，但可以在大廳打開
- *    「我也要一起作答」下場；做成兩套版面會讓那個開關處處要判斷兩次。
+ * 1. **主持人與玩家共用同一個房間畫面。** 主持人預設也一起作答，可以在大廳關掉
+ *    「主持人也一起作答」改成純控場；做成兩套版面會讓那個開關處處要判斷兩次。
  *    差別只在多出來的控制項（選題、開始、下一題、關房）。
  * 2. **倒數只是視覺效果。** 能不能作答一律由伺服器判斷（見 src/room.js 的 deadline），
  *    這裡的動畫跑完了不代表伺服器那邊已經關門，反之亦然。
@@ -27,6 +27,14 @@
   var MIN_QUESTIONS = 1;
   var MAX_QUESTIONS = 20;
   var URGENT_MS = 3000;
+
+  // 分類標題的展開箭頭。<details> 沒有預設的視覺提示，光看標題不知道還有沒有東西可以展開；
+  // 展開時由 CSS 轉 180 度（.cat[open] summary .chevron）
+  var CHEVRON =
+    '<svg class="chevron" xmlns="http://www.w3.org/2000/svg" height="20" width="20" ' +
+    'viewBox="0 -960 960 960" aria-hidden="true" focusable="false">' +
+    '<path d="M465-363.5q-7-2.5-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11' +
+    't28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5q-8 0-15-2.5Z"/></svg>';
 
   /*
    * 正式網域上的頁面是 Vercel 代理過來的，而 Vercel 代理外部網址時對 WebSocket 升級
@@ -83,7 +91,8 @@
   function cacheElements() {
     var ids = [
       'view-home', 'view-join', 'view-room', 'view-error',
-      'category-list', 'selected-count', 'custom-input', 'custom-add', 'custom-list',
+      'category-list', 'selected-count', 'custom-input', 'custom-add',
+      'selected-list', 'selected-empty',
       'max-players', 'group-size', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
@@ -198,7 +207,7 @@
 
       html +=
         '<details class="cat" data-category="' + category + '"' + (open ? ' open' : '') + '>' +
-        '<summary>' + escapeHtml(t('category' + capitalize(category))) +
+        '<summary>' + CHEVRON + escapeHtml(t('category' + capitalize(category))) +
         '<span class="cat-count" data-count="' + category + '"></span></summary>' +
         '<label class="check-row cat-all"><input type="checkbox" data-all="' + category + '" />' +
         '<span>' + escapeHtml(t('categorySelectAll')) + '</span></label>' +
@@ -217,6 +226,7 @@
     }
     el.categoryList.innerHTML = html;
     updateSelectedCount();
+    renderSelectedListOnly();
   }
 
   function questionsIn(category) {
@@ -252,20 +262,38 @@
     }
   }
 
-  // 只重畫，不回送伺服器。從伺服器同步回來時用這支，才不會又繞一圈送回去
-  function renderCustomListOnly() {
+  /*
+   * 右欄「已選題目」。內建題與自訂題列在同一張清單裡，順序就是實際出題順序——
+   * 主持人左邊勾了七零八落的一堆之後，只有這裡看得出來這場到底會問哪幾題、順序如何。
+   *
+   * 只重畫，不回送伺服器：從伺服器同步回來時也用這支，才不會又繞一圈送回去。
+   */
+  function renderSelectedListOnly() {
     var html = '';
-    for (var i = 0; i < state.custom.length; i += 1) {
+
+    // 依題庫順序，跟 sendSettings() 送出去的順序一致
+    for (var i = 0; i < BANK.list.length; i += 1) {
+      var question = BANK.list[i];
+      if (state.selected.indexOf(question.id) < 0) continue;
       html +=
-        '<li><span class="text">' + escapeHtml(state.custom[i]) + '</span>' +
-        '<button class="btn-outline btn-danger" type="button" data-remove="' + i + '" ' +
-        'aria-label="' + escapeHtml(t('customRemoveLabel')) + '">✕</button></li>';
+        '<li><span class="text">' + escapeHtml(question.text) + '</span>' +
+        '<button class="chosen-remove" type="button" data-unselect="' + escapeHtml(question.id) +
+        '" aria-label="' + escapeHtml(t('customRemoveLabel')) + '">✕</button></li>';
     }
-    el.customList.innerHTML = html;
+
+    for (var j = 0; j < state.custom.length; j += 1) {
+      html +=
+        '<li class="is-custom"><span class="text">' + escapeHtml(state.custom[j]) + '</span>' +
+        '<button class="chosen-remove" type="button" data-remove="' + j +
+        '" aria-label="' + escapeHtml(t('customRemoveLabel')) + '">✕</button></li>';
+    }
+
+    el.selectedList.innerHTML = html;
+    el.selectedEmpty.hidden = state.selected.length + state.custom.length > 0;
   }
 
   function renderCustomList() {
-    renderCustomListOnly();
+    renderSelectedListOnly();
     updateSelectedCount();
     sendSettings();
   }
@@ -314,11 +342,23 @@
         addCustomQuestion();
       }
     });
-    el.customList.addEventListener('click', function (event) {
-      var button = event.target.closest('[data-remove]');
-      if (!button) return;
-      state.custom.splice(Number(button.dataset.remove), 1);
-      renderCustomList();
+    el.selectedList.addEventListener('click', function (event) {
+      var remove = event.target.closest('[data-remove]');
+      if (remove) {
+        state.custom.splice(Number(remove.dataset.remove), 1);
+        return renderCustomList();
+      }
+
+      // 內建題：右欄刪掉等於左邊取消勾選，兩邊要一起變
+      var unselect = event.target.closest('[data-unselect]');
+      if (!unselect) return;
+      var id = unselect.dataset.unselect;
+      setSelected(id, false);
+      var box = el.categoryList.querySelector('[data-question=\"' + id + '\"]');
+      if (box) box.checked = false;
+      updateSelectedCount();
+      renderSelectedListOnly();
+      sendSettings();
     });
 
     el.createRoom.addEventListener('click', createRoom);
@@ -374,6 +414,7 @@
       setSelected(box.dataset.question, box.checked);
     }
     updateSelectedCount();
+    renderSelectedListOnly();
     sendSettings();
   }
 
@@ -674,7 +715,7 @@
     el.groupSize.value = room.groupSize;
     el.hostPlays.checked = room.hostPlays;
 
-    renderCustomListOnly();
+    renderSelectedListOnly();
     updateSelectedCount();
   }
 

@@ -24,8 +24,10 @@ export default {
     '每題 10 秒，選同意或不同意。全部答完後自動分組，並告訴你這組有哪些話題可以聊。',
 
   createHeading: '開一個房間',
-  questionsLabel: '選題目',
+  questionsLabel: '出題',
   questionsHint: '建議 8～10 題。題目在開始後就不能改了。',
+  selectedHeading: '已選題目',
+  emptySelected: '還沒選任何題目。',
   selectedCount: '已選 {n} 題',
   customLabel: '自己出題',
   customPlaceholder: '例如：早餐一定要配熱的',
@@ -46,7 +48,7 @@ export default {
   maxPlayersHint: '2～30 人，不含主持人自己',
   groupSizeLabel: '每組幾個人',
   groupSizeHint: '3～5 人。人數不足 6 人時不分組，改列兩兩契合度。',
-  hostPlaysLabel: '我也要一起作答',
+  hostPlaysLabel: '主持人也一起作答',
   hostPlaysHint: '關掉的話你只負責控場，不會被分到組裡。',
   createButton: '建立房間',
 
