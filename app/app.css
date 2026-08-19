@@ -909,7 +909,6 @@ textarea.field {
   cursor: pointer;
 }
 
-.advanced,
 .cat {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -917,7 +916,6 @@ textarea.field {
   padding: 0.5rem 0.75rem;
 }
 
-.advanced > summary,
 .cat > summary {
   cursor: pointer;
   font-weight: 600;
@@ -1402,4 +1400,26 @@ textarea.field {
   .chosen-list {
     max-height: 16rem;
   }
+}
+
+/* 自己出題獨立框起來：它跟上面那疊分類是不同性質的東西，
+   沒有框線會像是掛在最後一個分類底下 */
+.custom-box {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  margin-top: var(--space-2);
+}
+
+.custom-box .field-label {
+  margin-top: 0;
+}
+
+.custom-box .hint {
+  margin-bottom: 0;
+}
+
+/* 「開始遊戲」與「改題目」之間留一段距離，不要黏在一起變成一大塊 */
+#start-game-block .btn-block + .btn-block {
+  margin-top: 12px;
 }

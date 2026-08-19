@@ -6,7 +6,7 @@
  *
  * 1. **主持人與玩家共用同一個房間畫面。** 主持人預設也一起作答，可以在大廳關掉
  *    「主持人也一起作答」改成純控場；做成兩套版面會讓那個開關處處要判斷兩次。
- *    差別只在多出來的控制項（選題、開始、下一題、關房）。
+ *    差別只在多出來的控制項（開始、改題目、下一題、關房）。
  * 2. **倒數只是視覺效果。** 能不能作答一律由伺服器判斷（見 src/room.js 的 deadline），
  *    這裡的動畫跑完了不代表伺服器那邊已經關門，反之亦然。
  */
@@ -59,8 +59,6 @@
     resultsReported: false,
     // 主持人的選題只從伺服器同步一次，之後以本機為準（見 syncSettingsOnce）
     settingsSynced: false,
-    // 主持人是否已按過「出好了」。存在 sessionStorage，重整不會被打回出題那一步
-    setupDone: false,
     // 建房畫面的選題狀態
     selected: [],
     custom: [],
@@ -92,14 +90,15 @@
 
   function cacheElements() {
     var ids = [
-      'view-home', 'view-join', 'view-room', 'view-error',
+      'view-home', 'view-setup', 'view-join', 'view-room', 'view-error',
       'category-list', 'selected-count', 'custom-input', 'custom-add',
       'selected-list', 'selected-empty',
       'max-players', 'group-size', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
       'role-badge', 'exit-room', 'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
-      'setup-card', 'setup-done', 'setup-error', 'edit-questions', 'lobby-card', 'player-count', 'player-list', 'player-empty',
+      'setup-done', 'setup-error', 'edit-questions',
+      'lobby-card', 'player-count', 'player-list', 'player-empty',
       'start-game-block', 'start-game', 'start-game-error', 'waiting-hint',
       'question-card', 'question-progress', 'countdown', 'timer-fill', 'question-text',
       'ox-buttons', 'answer-o', 'answer-x', 'answer-hint',
@@ -382,7 +381,7 @@
     el.hostPlays.addEventListener('change', sendSettings);
 
     el.setupDone.addEventListener('click', finishSetup);
-    el.editQuestions.addEventListener('click', editQuestions);
+    el.editQuestions.addEventListener('click', showSetup);
     el.copyLink.addEventListener('click', copyShareLink);
     el.startGame.addEventListener('click', startGame);
     el.nextQuestion.addEventListener('click', function () {
@@ -452,7 +451,8 @@
       .then(function (data) {
         track('match_room_created');
         state.code = data.code;
-        showJoinForm();
+        // 先出題，挑頭像填暱稱排在後面（出題頁這時還沒連線，題目先留在前端）
+        showSetup();
       })
       .catch(function () {
         showError(el.createError, t('errCreateFailed'));
@@ -486,48 +486,34 @@
   }
 
   /*
-   * 「出好了，產生房號」。
+   * 出題頁有兩個進入點，按鈕的意思也不同：
    *
-   * 存進 sessionStorage 而不是只放記憶體：主持人重整之後不該被打回出題那一步
-   * （題目本來就從伺服器還原得回來，卻要他再按一次「出好了」很莫名）。
-   * 用 sessionStorage 不用 localStorage——這是「這一場」的進度，不是長期偏好。
+   *  1. 剛建好房、還沒連線 —— 按鈕是「創建房間」，按完去挑頭像填暱稱。
+   *     這時題目只存在前端，等連進房間後由 syncSettingsOnce 一次送上去。
+   *  2. 已經在大廳，按「改題目」回來 —— 按鈕是「完成」，按完把設定送出去、回房間。
+   *
+   * 用有沒有連線來分辨，不另外記一個旗標：連線狀態本來就是唯一的事實來源。
    */
+  function showSetup() {
+    el.setupDone.textContent = isOpen() ? t('saveQuestionsButton') : t('setupDoneButton');
+    hideError(el.setupError);
+    showView('setup');
+  }
+
   function finishSetup() {
     hideError(el.setupError);
     var total = state.selected.length + state.custom.length;
     if (total < MIN_QUESTIONS) return showError(el.setupError, t('errNoQuestions'));
     if (total > MAX_QUESTIONS) return showError(el.setupError, t('errTooManyQuestions'));
 
-    state.setupDone = true;
-    writeSetupDone(true);
-    renderRoom();
+    if (!isOpen()) return showJoinForm();
+
+    sendSettings();
+    showView('room');
   }
 
-  function editQuestions() {
-    state.setupDone = false;
-    writeSetupDone(false);
-    renderRoom();
-  }
-
-  function setupDoneKey() {
-    return 'web100-match-setup-' + state.code;
-  }
-
-  function writeSetupDone(done) {
-    try {
-      if (done) sessionStorage.setItem(setupDoneKey(), '1');
-      else sessionStorage.removeItem(setupDoneKey());
-    } catch (e) {
-      /* 無痕模式：重整會回到出題那一步，但這一場照樣能玩 */
-    }
-  }
-
-  function readSetupDone() {
-    try {
-      return sessionStorage.getItem(setupDoneKey()) === '1';
-    } catch (e) {
-      return false;
-    }
+  function isOpen() {
+    return Boolean(state.ws) && state.ws.readyState === WebSocket.OPEN;
   }
 
   function startGame() {
@@ -634,7 +620,6 @@
         track('match_player_joined');
         state.joinReported = true;
       }
-      state.setupDone = readSetupDone();
       showView('room');
       return;
     }
@@ -691,19 +676,11 @@
 
     /*
      * 每張卡片的顯示與否**全部**在這裡決定，不要散到各自的 render 函式裡。
-     * 選題卡原本只在 renderLobby() 設 hidden，一離開大廳就沒人再管它，
-     * 結果整場遊戲跟結算頁都還掛著。
-     *
-     * 主持人的大廳分兩步：先出題（setupStep），按下「出好了」才顯示房號與成員。
-     * 一開始就把房號攤開的話，主持人還在挑題目就有人掃碼進來等，
-     * 而且畫面上三張卡片一起出現，第一次用的人不知道該先看哪個。
-     * 玩家沒有這一步，進來就是房號與成員。
+     * 出題已經是獨立的一頁（view-setup），排在挑頭像之前，所以房間畫面只剩
+     * 房號、成員、作答、結果四張卡。
      */
-    var setupStep = inLobby && isHost && !state.setupDone;
-
-    el.setupCard.hidden = !setupStep;
-    el.shareCard.hidden = !inLobby || setupStep;
-    el.lobbyCard.hidden = !inLobby || setupStep;
+    el.shareCard.hidden = !inLobby;
+    el.lobbyCard.hidden = !inLobby;
     el.questionCard.hidden = inLobby || inResults;
     el.resultsCard.hidden = !inResults;
 
@@ -1043,6 +1020,7 @@
   function showView(name) {
     state.view = name;
     el.viewHome.hidden = name !== 'home';
+    el.viewSetup.hidden = name !== 'setup';
     el.viewJoin.hidden = name !== 'join';
     el.viewRoom.hidden = name !== 'room';
     el.viewError.hidden = name !== 'error';

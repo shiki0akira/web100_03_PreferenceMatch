@@ -19,7 +19,7 @@
           <section class="surface">
             <h2>{{createHeading}}</h2>
             <!-- 首頁只負責開房與加入，跟搶答遊戲一致。
-                 題目與其他設定都在開好房之後、大廳裡才設定 -->
+                 題目與其他設定在建好房之後的出題頁設定 -->
             <label class="field-label" for="max-players">{{maxPlayersLabel}}</label>
             <input
               class="field"
@@ -56,6 +56,76 @@
         </div>
 
         <p class="rules-link"><a href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </section>
+
+      <!-- 出題：建好房之後、挑頭像之前。這時還沒連上 WebSocket，
+           選的題目先留在前端，等主持人連進房間才由 syncSettingsOnce 送上去 -->
+      <section class="view" id="view-setup" hidden>
+        <section class="surface">
+          <div class="section-head">
+            <h2>{{questionsLabel}}</h2>
+            <span class="counter" id="selected-count"></span>
+          </div>
+
+          <div class="setup-cols">
+            <div class="setup-pick">
+              <!-- 分類用原生 <details>：展開收合不用寫 JS，手機上也不會一次列 35 題 -->
+              <div id="category-list"></div>
+
+              <!-- 自己出題獨立框起來，跟上面那疊分類分開 -->
+              <div class="custom-box">
+                <label class="field-label" for="custom-input">{{customLabel}}</label>
+                <div class="row">
+                  <input
+                    class="field"
+                    id="custom-input"
+                    type="text"
+                    maxlength="120"
+                    autocomplete="off"
+                    placeholder="{{customPlaceholder}}"
+                  />
+                  <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+                </div>
+                <p class="hint">{{questionsHint}}</p>
+              </div>
+            </div>
+
+            <div class="setup-chosen">
+              <h3 class="chosen-heading">{{selectedHeading}}</h3>
+              <ul class="chosen-list" id="selected-list"></ul>
+              <p class="empty" id="selected-empty">{{emptySelected}}</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 其他設定自成一區，並收容「創建房間」那顆主要按鈕 -->
+        <section class="surface">
+          <h2>{{advancedSummary}}</h2>
+
+          <label class="field-label" for="group-size">{{groupSizeLabel}}</label>
+          <input
+            class="field"
+            id="group-size"
+            type="number"
+            inputmode="numeric"
+            min="3"
+            max="5"
+            step="1"
+            value="4"
+          />
+          <p class="hint">{{groupSizeHint}}</p>
+
+          <!-- switch：開關類的設定用打勾框看起來像待辦事項，
+               switch 才讀得出來是開著還關著 -->
+          <label class="switch-row">
+            <span>{{hostPlaysLabel}}</span>
+            <input class="switch" type="checkbox" id="host-plays" checked />
+          </label>
+          <p class="hint">{{hostPlaysHint}}</p>
+
+          <button class="btn-solid btn-block" id="setup-done" type="button">{{setupDoneButton}}</button>
+          <p class="form-error" id="setup-error" role="alert" hidden></p>
+        </section>
       </section>
 
       <!-- 加入房間：填暱稱 -->
@@ -99,73 +169,6 @@
             <p class="share-url" id="share-url"></p>
           </div>
           <div class="qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
-        </section>
-
-        <!-- 出題與其他設定：只有主持人看得到，只有大廳階段能改 -->
-        <section class="surface" id="setup-card" hidden>
-          <div class="section-head">
-            <h2>{{questionsLabel}}</h2>
-            <span class="counter" id="selected-count"></span>
-          </div>
-
-          <!-- 左邊挑題、右邊看已選的。左邊會很長（7 類 35 題），
-               右邊固定在視線內才知道自己現在到底出了幾題、是哪幾題 -->
-          <div class="setup-cols">
-            <div class="setup-pick">
-              <!-- 分類用原生 <details>：展開收合不用寫 JS，手機上也不會一次列 35 題 -->
-              <div id="category-list"></div>
-
-              <label class="field-label" for="custom-input">{{customLabel}}</label>
-              <div class="row">
-                <input
-                  class="field"
-                  id="custom-input"
-                  type="text"
-                  maxlength="120"
-                  autocomplete="off"
-                  placeholder="{{customPlaceholder}}"
-                />
-                <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
-              </div>
-              <p class="hint">{{questionsHint}}</p>
-            </div>
-
-            <div class="setup-chosen">
-              <h3 class="chosen-heading">{{selectedHeading}}</h3>
-              <ul class="chosen-list" id="selected-list"></ul>
-              <p class="empty" id="selected-empty">{{emptySelected}}</p>
-            </div>
-          </div>
-
-          <!-- 直接展開：只有兩個設定，收起來反而讓人以為沒東西可設 -->
-          <details class="advanced" open>
-            <summary>{{advancedSummary}}</summary>
-
-            <label class="field-label" for="group-size">{{groupSizeLabel}}</label>
-            <input
-              class="field"
-              id="group-size"
-              type="number"
-              inputmode="numeric"
-              min="3"
-              max="5"
-              step="1"
-              value="4"
-            />
-            <p class="hint">{{groupSizeHint}}</p>
-
-            <!-- switch：開關類的設定用 checkbox 打勾看起來像「待辦事項」，
-                 用 switch 才讀得出來是「開著／關著」的狀態 -->
-            <label class="switch-row">
-              <span>{{hostPlaysLabel}}</span>
-              <input class="switch" type="checkbox" id="host-plays" checked />
-            </label>
-            <p class="hint">{{hostPlaysHint}}</p>
-          </details>
-
-          <!-- 出題確認之後才進到房號那一步，主持人不會邊出題邊被人加進來 -->
-          <button class="btn-solid btn-block" id="setup-done" type="button">{{setupDoneButton}}</button>
-          <p class="form-error" id="setup-error" role="alert" hidden></p>
         </section>
 
         <section class="surface" id="lobby-card">
