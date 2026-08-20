@@ -13,9 +13,10 @@ import {
   buildGroups,
   groupTopics,
   affinityRanking,
-  DEFAULT_GROUP_SIZE,
-  MIN_GROUP_SIZE,
-  MAX_GROUP_SIZE,
+  topPairsByPlayer,
+  suggestedGroupCount,
+  MIN_GROUP_COUNT,
+  MAX_GROUP_COUNT,
 } from './grouping.js';
 
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
@@ -101,7 +102,8 @@ export class MatchRoom {
 
       // 主持人預設也一起作答、一起被分組。純控場的場合在大廳裡關掉
       hostPlays: true,
-      groupSize: DEFAULT_GROUP_SIZE,
+      // 預設組數跟著人數上限走，主持人可以在大廳自己改
+      groupCount: suggestedGroupCount(body.maxPlayers),
       questionSeconds: DEFAULT_QUESTION_SECONDS,
 
       /*
@@ -259,10 +261,10 @@ export class MatchRoom {
       // 空清單是合法的中間狀態（主持人正在重挑），擋在 startGame 那關就好
       room.questions = cleanQuestions(msg.questions) ?? [];
     }
-    if (msg.groupSize !== undefined) {
-      const size = Number(msg.groupSize);
-      if (Number.isInteger(size) && size >= MIN_GROUP_SIZE && size <= MAX_GROUP_SIZE) {
-        room.groupSize = size;
+    if (msg.groupCount !== undefined) {
+      const count = Number(msg.groupCount);
+      if (Number.isInteger(count) && count >= MIN_GROUP_COUNT && count <= MAX_GROUP_COUNT) {
+        room.groupCount = count;
       }
     }
     if (msg.questionSeconds !== undefined && QUESTION_SECONDS.includes(Number(msg.questionSeconds))) {
@@ -525,7 +527,7 @@ function publicState(room, online) {
     status: room.status,
     started: room.started,
     hostPlays: room.hostPlays,
-    groupSize: room.groupSize,
+    groupCount: room.groupCount,
     questionSeconds: room.questionSeconds,
     /*
      * 完整的題目清單**只在大廳送**。
@@ -587,7 +589,7 @@ function computeResult(room) {
   const playerIds = candidates.filter((id) => Object.keys(room.answers[id] ?? {}).length > 0);
   const skipped = candidates.filter((id) => !playerIds.includes(id));
 
-  const { groups, grouped } = buildGroups(playerIds, room.answers, room.groupSize);
+  const { groups, grouped } = buildGroups(playerIds, room.answers, room.groupCount);
 
   return {
     grouped,
@@ -595,7 +597,10 @@ function computeResult(room) {
       members: group.members,
       topics: groupTopics(group.members, room.answers),
     })),
-    ranking: affinityRanking(playerIds, room.answers),
+    // 每個人自己的前三名，客戶端拿自己的 clientId 取用
+    topPairs: topPairsByPlayer(playerIds, room.answers),
+    // 主持人不作答時他不在 topPairs 裡，改看全場最合的幾對
+    topPairsOverall: affinityRanking(playerIds, room.answers),
     skipped,
   };
 }

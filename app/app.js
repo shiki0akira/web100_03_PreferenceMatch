@@ -95,7 +95,7 @@
       'view-home', 'view-setup', 'view-join', 'view-room', 'view-error',
       'category-list', 'selected-count', 'custom-input', 'custom-add',
       'selected-list', 'selected-empty', 'random-pick',
-      'max-players', 'group-size', 'question-seconds', 'host-plays', 'create-room', 'create-error',
+      'max-players', 'group-count', 'question-seconds', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
       'role-badge', 'exit-room', 'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
@@ -107,7 +107,8 @@
       'tally', 'tally-o-count', 'tally-o-list', 'tally-x-count', 'tally-x-list',
       'next-question',
       'results-card', 'my-group-card', 'my-group-members', 'my-group-topics', 'my-group-empty',
-      'all-groups', 'all-groups-heading', 'back-to-room',
+      'top-pairs-card', 'top-pairs', 'top-pairs-hint', 'top-pairs-empty',
+      'all-groups-card', 'all-groups', 'all-groups-heading', 'back-to-room',
       'error-title', 'error-desc', 'conn-banner',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -408,7 +409,7 @@
       if (event.key === 'Enter') enterRoom();
     });
 
-    el.groupSize.addEventListener('change', sendSettings);
+    el.groupCount.addEventListener('change', sendSettings);
     el.questionSeconds.addEventListener('change', sendSettings);
     el.hostPlays.addEventListener('change', sendSettings);
 
@@ -546,7 +547,7 @@
     send({
       t: 'settings',
       questions: questions,
-      groupSize: Number(el.groupSize.value) || 4,
+      groupCount: groupCountValue(),
       questionSeconds: secondsValue(),
       hostPlays: el.hostPlays.checked,
     });
@@ -583,6 +584,12 @@
   function secondsValue() {
     var picked = el.questionSeconds.querySelector('input:checked');
     return picked ? Number(picked.value) : 10;
+  }
+
+  // 組數同樣是一排單選。伺服器還會依實到人數夾一次，這裡送什麼都不會算出壞的分組
+  function groupCountValue() {
+    var picked = el.groupCount.querySelector('input:checked');
+    return picked ? Number(picked.value) : 2;
   }
 
   function isOpen() {
@@ -833,7 +840,8 @@
     for (var j = 0; j < boxes.length; j += 1) {
       boxes[j].checked = state.selected.indexOf(boxes[j].dataset.question) >= 0;
     }
-    el.groupSize.value = room.groupSize;
+    var groupRadio = el.groupCount.querySelector('[value="' + room.groupCount + '"]');
+    if (groupRadio) groupRadio.checked = true;
     var secondsRadio = el.questionSeconds.querySelector('[value="' + room.questionSeconds + '"]');
     if (secondsRadio) secondsRadio.checked = true;
     el.hostPlays.checked = room.hostPlays;
@@ -978,16 +986,32 @@
       if (result.groups[i].members.indexOf(state.clientId) >= 0) mine = result.groups[i];
     }
 
-    // 主持人不作答時本來就不在任何一組，這張卡直接收起來
-    el.myGroupCard.hidden = !mine;
-    if (mine) {
+    /*
+     * 沒分組的場次「你這一組」＝全場所有人，跟下面的兩兩契合度講的是同一件事，
+     * 只是換個排版再說一次。人少的時候真正有用的是「誰跟我最合」，所以這張卡收起來。
+     * 主持人選了不作答時他也不在任何一組，一樣收起來。
+     */
+    el.myGroupCard.hidden = !mine || !result.grouped;
+    if (mine && result.grouped) {
       el.myGroupMembers.innerHTML = chips(mine.members);
       el.myGroupTopics.innerHTML = topicList(mine.topics);
       el.myGroupEmpty.hidden = mine.topics.length > 0;
     }
 
-    el.allGroupsHeading.textContent = result.grouped ? t('allGroupsHeading') : t('tooFewToGroup');
-    el.allGroups.innerHTML = result.grouped ? groupBlocks(result) : pairList(result.ranking);
+    // 沒分組時補一句說明這場為什麼沒分組，有分組就不用解釋
+    el.topPairsHint.hidden = result.grouped;
+
+    // 主持人不作答時他不在 topPairs 裡，改看全場最合的幾對
+    var pairs = (result.topPairs && result.topPairs[state.clientId]) || result.topPairsOverall || [];
+    el.topPairs.innerHTML = pairList(pairs);
+    el.topPairsEmpty.hidden = pairs.length > 0;
+
+    // 全部分組只有真的分了組才有東西可看
+    el.allGroupsCard.hidden = !result.grouped;
+    if (result.grouped) {
+      el.allGroupsHeading.textContent = t('allGroupsHeading');
+      el.allGroups.innerHTML = groupBlocks(result);
+    }
   }
 
   function groupBlocks(result) {
@@ -1033,16 +1057,27 @@
     return id;
   }
 
-  function pairList(ranking) {
-    var html = '<ul class="pair-list">';
-    for (var i = 0; i < ranking.length; i += 1) {
-      var row = ranking[i];
+  /*
+   * 每一列是一個可以展開的 <details>：收合時只有「誰 + 幾題一樣」，
+   * 展開才列出那幾題是什麼。不展開直接全列的話，三個人就是三十幾行，
+   * 要捲很久才看得到自己最合的是誰——而那才是這張卡要回答的問題。
+   */
+  function pairList(pairs) {
+    var html = '';
+    for (var i = 0; i < pairs.length; i += 1) {
+      var row = pairs[i];
+      var shared = row.shared || [];
       html +=
-        '<li>' + chips(row.players).replace(/<li /g, '<span ').replace(/<\/li>/g, '</span>') +
+        '<li><details class="pair"><summary>' + CHEVRON +
+        chips(row.players).replace(/<li /g, '<span ').replace(/<\/li>/g, '</span>') +
         '<span class="score">' + escapeHtml(t('pairSame', { same: row.same, common: row.common })) +
-        '</span></li>';
+        '</span></summary>' +
+        (shared.length
+          ? '<ul class="topic-list">' + topicList(shared) + '</ul>'
+          : '<p class="empty">' + escapeHtml(t('noSharedAnswers')) + '</p>') +
+        '</details></li>';
     }
-    return html + '</ul>';
+    return html;
   }
 
   /* ---------- 分享 ---------- */

@@ -50,7 +50,9 @@ export default {
   advancedSummary: '其他设置',
   maxPlayersLabel: '人数上限',
   maxPlayersHint: '2～30 人，不含主持人自己',
-  groupSizeLabel: '每组几个人',
+  groupCountLabel: '分成几组',
+  groupCountHint:
+    '2～4 组。每组几个人由实到人数平均分，不到 5 人就不分组。',
   groupSizeHint: '3～5 人。人数不足 6 人时不分组，改列两两契合度。',
   secondsLabel: '每题几秒',
   secondsHint: '10 秒适合大多数场合。题目长一点就选 12 或 15，想要紧凑一点就选 5 或 8。',
@@ -110,7 +112,10 @@ export default {
   topicDisagree: '都不同意',
   dissenterNote: '只有 {name} 不一样',
   skippedNote: '{n} 人一题都没答，没有列入分组。',
-  tooFewToGroup: '人数不到 6 人，不分组，改列两两契合度。',
+  topPairsHeading: '跟你最合的人',
+  tooFewToGroup: '人数不到 5 人，这场不分组。',
+  noPairs: '还没有可以比对的人。',
+  noSharedAnswers: '你们没有答案一样的题目。',
   pairSame: '{same} / {common} 题一样',
   resultsHostHint: '请大家照着分组去找组员聊天。',
 
@@ -149,6 +154,7 @@ export default {
   rulesGroupingHeading: '分组是怎么算出来的',
   rulesGrouping1: '两个人的契合度＝双方都有作答的题目里，答案相同的比例。题目没有正确答案，所以这里没有分数也没有对错。',
   rulesGrouping2: '排名时会依「答案的冷门程度」加权：全场九成都选同一边的题目几乎没有信息量，两个人都选少数派那一边才是真的像。',
-  rulesGrouping3: '分组先找契合度最高的一对当种子，再把最合的人一个个加进来直到满员。每个人都会在某一组里，不会有人落单。人数不到 6 人就不分组，改列两两契合度。',
+  rulesGrouping3:
+    '主持人只选「分成几组」，每组几个人由实到人数平均分。分组先找契合度最高的一对当种子，再把最合的人一个个加进来直到满员。每个人都会在某一组里，不会有人落单。人数不到 5 人就不分组，只列出跟你最合的人。',
   rulesBack: '← 回游戏',
 };

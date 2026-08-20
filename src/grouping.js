@@ -6,16 +6,35 @@
  * 唯一的量是「兩個人有多像」。
  */
 
-// 每組目標人數。3 以下聊不起來，5 以上會有人插不上話
-export const DEFAULT_GROUP_SIZE = 4;
-export const MIN_GROUP_SIZE = 3;
-export const MAX_GROUP_SIZE = 5;
+/*
+ * 主持人設定的是「分成幾組」，不是「每組幾個人」。
+ * 現場的人只會知道「這裡要拆成幾攤」，換算每組幾個人是這支程式的事。
+ */
+export const MIN_GROUP_COUNT = 2;
+export const MAX_GROUP_COUNT = 4;
 
-// 少於這個人數就不分組，直接給兩兩契合度榜——6 個人分兩組、每組 3 人已經是下限
-export const MIN_PLAYERS_TO_GROUP = 6;
+// 每組人數不再由主持人指定，但還是要有邊界：2 人不算一組，超過 8 人就會有人插不上話
+export const MIN_GROUP_SIZE = 2;
+export const MAX_GROUP_SIZE = 8;
+
+// 少於這個人數就不分組，只給兩兩契合度——5 個人才拆得出 3 + 2
+export const MIN_PLAYERS_TO_GROUP = 5;
 
 // 共同作答題數少於這個數字的組合不列進榜：1 題就 100% 只是誤導
 export const MIN_COMMON_ANSWERS = 2;
+
+// 每個人在結果頁看得到幾個「跟你最合的人」
+export const TOP_PAIRS = 3;
+
+/*
+ * 依人數建議組數，給主持人當預設值（他可以自己改）。
+ * 5–11 人 2 組、12–19 人 3 組、20 人以上 4 組，換算下來每組大約 3～8 人。
+ */
+export function suggestedGroupCount(playerCount) {
+  if (playerCount >= 20) return 4;
+  if (playerCount >= 12) return 3;
+  return MIN_GROUP_COUNT;
+}
 
 /*
  * 每個「答案」的權重＝該答案在全場的比例的倒數。
@@ -149,17 +168,16 @@ export function lookup(matrix, a, b) {
  * （A 的拍檔是 B，不代表 B 的拍檔是 A），一定會有人不是任何人的拍檔——
  * 破冰活動裡讓人發現自己沒被任何人選到是最糟的結果。
  */
-export function buildGroups(playerIds, answers, groupSize = DEFAULT_GROUP_SIZE) {
+export function buildGroups(playerIds, answers, groupCount = MIN_GROUP_COUNT) {
   const { ids, matrix } = affinityMatrix(playerIds, answers);
   if (!ids.length) return { groups: [], grouped: false, matrix };
 
   if (ids.length < MIN_PLAYERS_TO_GROUP) {
-    // 人太少，分組沒意義：整場當一組，畫面改成顯示兩兩契合度榜
+    // 人太少，分組沒意義：整場當一組，畫面只顯示兩兩契合度
     return { groups: [{ members: ids }], grouped: false, matrix };
   }
 
-  const size = clamp(groupSize, MIN_GROUP_SIZE, MAX_GROUP_SIZE);
-  const targets = groupSizes(ids.length, size);
+  const targets = groupSizes(ids.length, resolveGroupCount(ids.length, groupCount));
 
   const remaining = new Set(ids);
   const groups = [];
@@ -206,9 +224,22 @@ export function buildGroups(playerIds, answers, groupSize = DEFAULT_GROUP_SIZE) 
   return { groups, grouped: true, matrix };
 }
 
+/*
+ * 主持人選的組數不一定跟實到人數搭得起來，這裡夾回做得出來的範圍。
+ *
+ * 下限：組數太少會有組超過 MAX_GROUP_SIZE（30 人分 2 組 = 每組 15 個，聊不起來）
+ * 上限：組數太多會有組不到 MIN_GROUP_SIZE（5 人分 4 組會生出 3 個 1 人組）
+ *
+ * 兩邊夾完之後範圍一定不會是空的：ids.length ≥ MIN_PLAYERS_TO_GROUP 才會走到這裡。
+ */
+function resolveGroupCount(total, requested) {
+  const fewest = Math.max(MIN_GROUP_COUNT, Math.ceil(total / MAX_GROUP_SIZE));
+  const most = Math.min(MAX_GROUP_COUNT, Math.floor(total / MIN_GROUP_SIZE));
+  return clamp(requested, fewest, Math.max(fewest, most));
+}
+
 // 平均分，餘數往前面的組加：10 人分 3 組 = 4 / 3 / 3，不會變成 4 / 4 / 2
-function groupSizes(total, size) {
-  const count = Math.max(1, Math.ceil(total / size));
+function groupSizes(total, count) {
   const base = Math.floor(total / count);
   const extra = total % count;
   return Array.from({ length: count }, (unused, index) => base + (index < extra ? 1 : 0));
@@ -307,10 +338,13 @@ export function groupTopics(members, answers, minTopics = 3) {
 }
 
 /*
- * 兩兩契合度榜。人數不足以分組時給玩家看的東西，主持人畫面也用它當補充資訊。
+ * 全場的兩兩契合度榜。每個玩家看的是 topPairsByPlayer 算出來的自己那三列，
+ * 這支只剩一個用途：主持人選了不作答時他沒有任何配對，拿全場最合的幾對頂上，
+ * 不然他的結果頁會開天窗。
+ *
  * 共同作答題數不到門檻的組合不列——1 題就 100% 只會讓人誤會。
  */
-export function affinityRanking(playerIds, answers, limit = 10) {
+export function affinityRanking(playerIds, answers, limit = TOP_PAIRS) {
   const { ids, matrix } = affinityMatrix(playerIds, answers);
   const rows = [];
 
@@ -320,18 +354,69 @@ export function affinityRanking(playerIds, answers, limit = 10) {
       if (!affinity || affinity.common < MIN_COMMON_ANSWERS) continue;
       rows.push({
         players: [ids[i], ids[j]],
-        score: affinity.score,
         same: affinity.same,
         common: affinity.common,
         percent: affinity.percent,
+        shared: affinity.sharedQuestions,
       });
     }
   }
 
-  rows.sort(
-    (a, b) => b.score - a.score || b.common - a.common || (a.players[0] < b.players[0] ? -1 : 1),
-  );
+  rows.sort(byDisplayedRatio);
   return rows.slice(0, limit);
+}
+
+/*
+ * 每個人自己的「跟你最合的人」前幾名。
+ *
+ * 為什麼在伺服器算好而不是把全部配對送下去讓客戶端篩：廣播的內容所有人共用一份，
+ * 30 個人有 435 種配對，每一組還要帶共同答案的題號，整包會膨脹到幾十 KB，
+ * 而每個人真正會看的只有 3 列。這裡先切好，只送出去 人數 × 3 列。
+ */
+export function topPairsByPlayer(playerIds, answers, limit = TOP_PAIRS) {
+  const { ids, matrix } = affinityMatrix(playerIds, answers);
+  const out = {};
+
+  for (const id of ids) {
+    const rows = [];
+    for (const other of ids) {
+      if (other === id) continue;
+      const affinity = lookup(matrix, id, other);
+      if (!affinity || affinity.common < MIN_COMMON_ANSWERS) continue;
+      rows.push({
+        // 第一個永遠是自己，客戶端不用再判斷哪一邊是「我」
+        players: [id, other],
+        same: affinity.same,
+        common: affinity.common,
+        percent: affinity.percent,
+        shared: affinity.sharedQuestions,
+      });
+    }
+    rows.sort(byDisplayedRatio);
+    out[id] = rows.slice(0, limit);
+  }
+  return out;
+}
+
+/*
+ * 排序用畫面上顯示的那個比例（same / common），不是加權分數。
+ *
+ * 加權分數是拿來分組的，人少的時候沒有統計意義：3 個人的場次「少數派」永遠剛好是
+ * 1 個人，權重只是在放大雜訊。而畫面顯示 same / common、排序卻用加權分數的話，
+ * 兩個數字不同調就會出現「8 / 10 題一樣」排在「6 / 8 題一樣」下面，玩家只會覺得程式壞了。
+ *
+ * 交叉相乘比大小，避免除法的浮點誤差（common 一定 ≥ MIN_COMMON_ANSWERS，不會是 0）。
+ * 比例相同時共同作答題數多的排前面：8 / 10 比 4 / 5 可信。
+ */
+function byDisplayedRatio(a, b) {
+  // 最後拿配對本身當關鍵字，同分時的順序才不會受輸入順序影響
+  const keyA = a.players.join('|');
+  const keyB = b.players.join('|');
+  return (
+    b.same * a.common - a.same * b.common ||
+    b.common - a.common ||
+    (keyA < keyB ? -1 : keyA > keyB ? 1 : 0)
+  );
 }
 
 function clamp(value, min, max) {

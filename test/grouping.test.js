@@ -14,6 +14,10 @@ import {
   buildGroups,
   groupTopics,
   affinityRanking,
+  affinityMatrix,
+  lookup,
+  topPairsByPlayer,
+  suggestedGroupCount,
 } from '../src/grouping.js';
 
 // 依序把答案字串（例如 'OOXX'）攤成 { q1: 'O', q2: 'O', q3: 'X', q4: 'X' }。
@@ -78,8 +82,13 @@ test('隨機兩個人的期望分數是 1.0（分數的基準線）', () => {
     g: 'OOOOO',
     h: 'XXXXX',
   });
-  const ranking = affinityRanking(Object.keys(answers), answers, 999);
-  const mean = ranking.reduce((sum, row) => sum + row.score, 0) / ranking.length;
+  // 加權分數只在分組時用得到，不會送到畫面上，所以直接從矩陣取
+  const { ids, matrix } = affinityMatrix(Object.keys(answers), answers);
+  const scores = [];
+  for (let i = 0; i < ids.length; i += 1) {
+    for (let j = i + 1; j < ids.length; j += 1) scores.push(lookup(matrix, ids[i], ids[j]).score);
+  }
+  const mean = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
   assert.ok(Math.abs(mean - 1) < 1e-9, `平均分數應該是 1.0，實際是 ${mean}`);
 });
@@ -95,7 +104,7 @@ test('沒作答的題目跳過，不算成答案不同', () => {
   assert.equal(affinity.percent, 100);
 });
 
-test('10 人分成 4 / 3 / 3，每個人剛好在一組裡', () => {
+test('10 人分 3 組 = 4 / 3 / 3，每個人剛好在一組裡', () => {
   const answers = answersFrom({
     p01: 'OOOOOOOO',
     p02: 'OOOOOOOX',
@@ -108,7 +117,8 @@ test('10 人分成 4 / 3 / 3，每個人剛好在一組裡', () => {
     p09: 'XXXXXXOO',
     p10: 'OXOXOXOX',
   });
-  const { groups, grouped } = buildGroups(Object.keys(answers), answers, 4);
+  // 第三個參數是**組數**，不是每組人數
+  const { groups, grouped } = buildGroups(Object.keys(answers), answers, 3);
 
   assert.equal(grouped, true);
   assert.deepEqual(
@@ -142,13 +152,76 @@ test('同樣的輸入一定算出同樣的分組', () => {
   );
 });
 
-test('不到 6 個人就不分組', () => {
-  const answers = answersFrom({ a: 'OOX', b: 'OOX', c: 'XXO', d: 'XXO', e: 'OXO' });
-  const { groups, grouped } = buildGroups(Object.keys(answers), answers, 4);
+test('不到 5 個人就不分組', () => {
+  const answers = answersFrom({ a: 'OOX', b: 'OOX', c: 'XXO', d: 'XXO' });
+  const { groups, grouped } = buildGroups(Object.keys(answers), answers, 2);
 
   assert.equal(grouped, false);
   assert.equal(groups.length, 1);
-  assert.equal(groups[0].members.length, 5);
+  assert.equal(groups[0].members.length, 4);
+});
+
+test('剛好 5 個人分 2 組 = 3 + 2', () => {
+  const answers = answersFrom({ a: 'OOX', b: 'OOX', c: 'XXO', d: 'XXO', e: 'OXO' });
+  const { groups, grouped } = buildGroups(Object.keys(answers), answers, 2);
+
+  assert.equal(grouped, true);
+  assert.deepEqual(groups.map((group) => group.members.length), [3, 2]);
+});
+
+/*
+ * 主持人選的組數跟實到人數不一定搭得起來。這兩條守住夾回範圍的邏輯——
+ * 「最多 4 組」跟「每組最多 8 人」是兩個獨立的上限，30 人分 4 組剛好卡在邊緣。
+ */
+test('組數太多時夾回來，不會生出 1 人組', () => {
+  const answers = answersFrom({ a: 'OOX', b: 'OOX', c: 'XXO', d: 'XXO', e: 'OXO' });
+  // 5 個人選 4 組的話會變成 2 / 1 / 1 / 1
+  const { groups } = buildGroups(Object.keys(answers), answers, 4);
+
+  assert.equal(groups.length, 2);
+  for (const group of groups) assert.ok(group.members.length >= 2, '不能有 1 個人的組');
+});
+
+test('人多時組數往上夾，不會有超過 8 個人的組', () => {
+  const rows = {};
+  for (let i = 1; i <= 30; i += 1) {
+    rows[`p${String(i).padStart(2, '0')}`] = i % 2 ? 'OOXOX' : 'XOXOO';
+  }
+  const answers = answersFrom(rows);
+  // 主持人選 2 組的話會變成每組 15 個人，聊不起來
+  const { groups } = buildGroups(Object.keys(answers), answers, 2);
+
+  assert.equal(groups.length, 4);
+  for (const group of groups) assert.ok(group.members.length <= 8, '一組最多 8 個人');
+  assert.equal(groups.flatMap((group) => group.members).length, 30);
+});
+
+test('建議組數：5–11 人 2 組、12–19 人 3 組、20 人以上 4 組', () => {
+  assert.equal(suggestedGroupCount(5), 2);
+  assert.equal(suggestedGroupCount(11), 2);
+  assert.equal(suggestedGroupCount(12), 3);
+  assert.equal(suggestedGroupCount(19), 3);
+  assert.equal(suggestedGroupCount(20), 4);
+  assert.equal(suggestedGroupCount(30), 4);
+});
+
+test('每個人的前三名是自己的配對，而且第一個永遠是自己', () => {
+  // a 跟 b 全一樣，跟 c 完全相反
+  const answers = answersFrom({ a: 'OOOO', b: 'OOOO', c: 'XXXX', d: 'OOXX' });
+  const pairs = topPairsByPlayer(Object.keys(answers), answers);
+
+  assert.deepEqual(pairs.a[0].players, ['a', 'b']);
+  assert.equal(pairs.a[0].same, 4);
+  // 三個人以外的配對不該出現在自己的清單裡
+  for (const [id, rows] of Object.entries(pairs)) {
+    assert.ok(rows.length <= 3, `${id} 最多三列`);
+    for (const row of rows) assert.equal(row.players[0], id);
+  }
+  // 展開要看得到共同答案的題目
+  assert.deepEqual(
+    pairs.a[0].shared.map((topic) => topic.questionId),
+    ['q1', 'q2', 'q3', 'q4'],
+  );
 });
 
 test('全組一致的題目不足時，補上只有一人不同的題目', () => {
@@ -177,13 +250,45 @@ test('共同作答不到 2 題的組合不列進契合度榜', () => {
   assert.ok(pairs.includes('c|d'), 'c|d 有 3 題共同，應該上榜');
 });
 
+/*
+ * 這個榜顯示的是 same / common，排序就必須跟那個數字一致。
+ * 以前是照加權分數排的，畫面上會出現「8 / 10 題一樣」排在「6 / 8 題一樣」下面，
+ * 3 人房實測就會撞到——少數派永遠剛好 1 個人，加權只是在放大雜訊。
+ */
+test('契合度榜照畫面顯示的比例排序，不是照加權分數', () => {
+  // a 跟 c 都答滿 10 題、8 題一樣（80%）；b 漏了 2 題，跟 a 是 6 / 8 一樣（75%）
+  const answers = answersFrom({
+    a: 'OOOOOOOOOO',
+    b: 'OOOOOOXX--',
+    c: 'OOOOXXOOOO',
+  });
+  const ranking = affinityRanking(Object.keys(answers), answers);
+
+  const top = ranking[0];
+  assert.deepEqual(top.players, ['a', 'c']);
+  assert.equal(top.same, 8);
+  assert.equal(top.common, 10);
+
+  // 顯示的比例必須是遞減的，否則玩家看到的順序就是亂的
+  for (let i = 1; i < ranking.length; i += 1) {
+    const prev = ranking[i - 1];
+    const row = ranking[i];
+    assert.ok(
+      prev.same / prev.common >= row.same / row.common,
+      `第 ${i} 列 ${row.same}/${row.common} 排在 ${prev.same}/${prev.common} 後面，比例卻比較高`,
+    );
+  }
+});
+
 test('每個人都答一樣時不會爆掉，分數也不會是 NaN', () => {
   const answers = answersFrom({ a: 'OOO', b: 'OOO', c: 'OOO', d: 'OOO', e: 'OOO', f: 'OOO' });
   const { groups } = buildGroups(Object.keys(answers), answers, 3);
 
   assert.equal(groups.flatMap((group) => group.members).length, 6);
-  const ranking = affinityRanking(Object.keys(answers), answers);
-  for (const row of ranking) assert.ok(Number.isFinite(row.score), 'score 不能是 NaN');
+  const pairs = topPairsByPlayer(Object.keys(answers), answers);
+  for (const rows of Object.values(pairs)) {
+    for (const row of rows) assert.ok(Number.isFinite(row.percent), 'percent 不能是 NaN');
+  }
 });
 
 test('完全沒有人作答時回傳空結果，不丟例外', () => {

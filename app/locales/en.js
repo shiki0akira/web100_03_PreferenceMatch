@@ -50,7 +50,9 @@ export default {
   advancedSummary: 'More settings',
   maxPlayersLabel: 'Player limit',
   maxPlayersHint: '2–30 players, not counting the host',
-  groupSizeLabel: 'People per group',
+  groupCountLabel: 'How many groups',
+  groupCountHint:
+    '2 to 4. Group sizes are worked out from who actually shows up. Under 5 players the room is not split.',
   groupSizeHint: '3 to 5. Under 6 players the room is not split — you get pair matches instead.',
   secondsLabel: 'Seconds per question',
   secondsHint: '10 works for most rooms. Pick 12 or 15 for longer questions, 5 or 8 to keep it brisk.',
@@ -110,7 +112,10 @@ export default {
   topicDisagree: 'all disagreed',
   dissenterNote: 'everyone except {name}',
   skippedNote: '{n} answered nothing and were left out of the grouping.',
-  tooFewToGroup: 'Under 6 players, so no groups — here are the closest pairs instead.',
+  topPairsHeading: 'Your closest matches',
+  tooFewToGroup: 'Under 5 players, so no groups this round.',
+  noPairs: 'Nobody to compare with yet.',
+  noSharedAnswers: 'You did not answer any question the same way.',
   pairSame: '{same} of {common} the same',
   resultsHostHint: 'Send everyone off to talk to their group.',
 
@@ -149,6 +154,7 @@ export default {
   rulesGroupingHeading: 'How the grouping works',
   rulesGrouping1: 'Two people match on the share of questions they both answered the same way. There are no right answers here, so there is no score and nothing to get wrong.',
   rulesGrouping2: 'For ranking, answers are weighted by how uncommon they are: a question where nine in ten picked the same side tells you almost nothing, while two people both picking the rare side really does mean something.',
-  rulesGrouping3: 'Grouping starts from the closest pair, then adds whoever fits the group best until it is full. Everyone lands in a group — nobody is left over. Under 6 players there are no groups, just the closest pairs.',
+  rulesGrouping3:
+    'The host only picks how many groups; the size of each one is worked out from who actually shows up. Grouping starts from the closest pair, then adds whoever fits the group best until it is full. Everyone lands in a group — nobody is left over. Under 5 players there are no groups, just your closest matches.',
   rulesBack: '← Back to the game',
 };

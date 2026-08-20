@@ -1314,14 +1314,41 @@ textarea.field {
   gap: 0.4rem;
 }
 
+/* padding 給裡面的 summary 而不是 li，hover 底色才會鋪滿整條 */
 .pair-list li {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.pair > summary {
+  /* 原生的三角形跟自己畫的箭頭會重複 */
+  list-style: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  transition: background 0.12s ease;
+}
+
+.pair > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pair > summary:hover {
+  background: var(--color-surface-glass);
+}
+
+.pair[open] > summary .chevron {
+  transform: rotate(180deg);
+}
+
+/* 展開後的共同答案：跟標題列切齊，底部留白收尾 */
+.pair > .topic-list,
+.pair > .empty {
+  margin: 0;
+  padding: 0 0.75rem 0.6rem;
 }
 
 .pair-list .score {

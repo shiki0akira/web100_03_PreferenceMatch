@@ -109,18 +109,14 @@
         <section class="surface">
           <h2>{{advancedSummary}}</h2>
 
-          <label class="field-label" for="group-size">{{groupSizeLabel}}</label>
-          <input
-            class="field"
-            id="group-size"
-            type="number"
-            inputmode="numeric"
-            min="3"
-            max="5"
-            step="1"
-            value="4"
-          />
-          <p class="hint">{{groupSizeHint}}</p>
+          <span class="field-label">{{groupCountLabel}}</span>
+          <!-- 現場只會知道「要拆成幾攤」，每組幾個人由人數除出來 -->
+          <div class="seg" id="group-count" role="radiogroup" aria-label="{{groupCountLabel}}">
+            <label class="seg-item"><input type="radio" name="group-count" value="2" checked /><span>2</span></label>
+            <label class="seg-item"><input type="radio" name="group-count" value="3" /><span>3</span></label>
+            <label class="seg-item"><input type="radio" name="group-count" value="4" /><span>4</span></label>
+          </div>
+          <p class="hint">{{groupCountHint}}</p>
 
           <span class="field-label">{{secondsLabel}}</span>
           <!-- 五個選項排成一排的單選，比下拉少一次點擊，也一眼看得到全部選項 -->
@@ -253,7 +249,19 @@
             <p class="empty" id="my-group-empty">{{noTopics}}</p>
           </div>
 
-          <div class="surface">
+          <!-- 每個人自己的前三名。不管有沒有分組都會出現，是人少時唯一的結果 -->
+          <div class="surface" id="top-pairs-card">
+            <div class="section-head">
+              <h2>{{topPairsHeading}}</h2>
+            </div>
+            <!-- 人數不到 5 人時才顯示：說明這場為什麼沒有分組 -->
+            <p class="hint" id="top-pairs-hint" hidden>{{tooFewToGroup}}</p>
+            <ul class="pair-list" id="top-pairs"></ul>
+            <p class="empty" id="top-pairs-empty" hidden>{{noPairs}}</p>
+          </div>
+
+          <!-- 有分組時才出現：主持人要照這個叫人，玩家也想看看別組是誰 -->
+          <div class="surface" id="all-groups-card">
             <div class="section-head">
               <h2 id="all-groups-heading">{{allGroupsHeading}}</h2>
             </div>

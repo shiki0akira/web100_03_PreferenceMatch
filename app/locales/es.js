@@ -50,7 +50,9 @@ export default {
   advancedSummary: 'Más ajustes',
   maxPlayersLabel: 'Límite de participantes',
   maxPlayersHint: 'De 2 a 30 personas, sin contar a quien dirige',
-  groupSizeLabel: 'Personas por grupo',
+  groupCountLabel: 'Cuántos grupos',
+  groupCountHint:
+    'De 2 a 4. El tamaño de cada grupo sale del número de personas que participen. Con menos de 5 no se hacen grupos.',
   groupSizeHint: 'De 3 a 5. Con menos de 6 no se hacen grupos: salen parejas en su lugar.',
   secondsLabel: 'Segundos por pregunta',
   secondsHint: '10 va bien casi siempre. Elige 12 o 15 para preguntas largas, 5 u 8 para ir rápido.',
@@ -110,7 +112,10 @@ export default {
   topicDisagree: 'todos en desacuerdo',
   dissenterNote: 'todos menos {name}',
   skippedNote: '{n} no respondieron nada y se han quedado fuera del reparto.',
-  tooFewToGroup: 'Con menos de 6 no hay grupos: aquí van las parejas más afines.',
+  topPairsHeading: 'Con quién encajas más',
+  tooFewToGroup: 'Con menos de 5 personas no se forman grupos.',
+  noPairs: 'Todavía no hay nadie con quien comparar.',
+  noSharedAnswers: 'No coincidís en ninguna pregunta.',
   pairSame: '{same} de {common} iguales',
   resultsHostHint: 'Manda a cada cual a hablar con su grupo.',
 
@@ -149,6 +154,7 @@ export default {
   rulesGroupingHeading: 'Cómo se calculan los grupos',
   rulesGrouping1: 'La afinidad entre dos personas es la proporción de preguntas que ambas respondieron igual, de entre las que respondieron las dos. Aquí no hay respuestas correctas, así que no hay puntuación ni nada que fallar.',
   rulesGrouping2: 'Para el ranking, las respuestas se ponderan según lo poco comunes que sean: una pregunta en la que nueve de cada diez eligen lo mismo casi no dice nada, mientras que dos personas que eligen el lado minoritario sí.',
-  rulesGrouping3: 'El reparto arranca por la pareja más afín y va añadiendo a quien mejor encaja en el grupo hasta llenarlo. Todo el mundo acaba en un grupo, nadie se queda fuera. Con menos de 6 no hay grupos, solo las parejas más afines.',
+  rulesGrouping3:
+    'Quien presenta solo elige en cuántos grupos se divide; el tamaño de cada uno sale del número de personas que participen. Se empieza por la pareja más afín y se va añadiendo a quien mejor encaje hasta completar el grupo. Todo el mundo acaba en algún grupo, nadie se queda fuera. Con menos de 5 personas no hay grupos: solo sale con quién encajas más.',
   rulesBack: '← Volver al juego',
 };

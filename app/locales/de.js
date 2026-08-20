@@ -50,7 +50,9 @@ export default {
   advancedSummary: 'Weitere Einstellungen',
   maxPlayersLabel: 'Maximale Teilnehmerzahl',
   maxPlayersHint: '2 bis 30 Personen, ohne die Moderation',
-  groupSizeLabel: 'Personen pro Gruppe',
+  groupCountLabel: 'Wie viele Gruppen',
+  groupCountHint:
+    '2 bis 4. Die Gruppengröße ergibt sich aus der tatsächlichen Teilnehmerzahl. Unter 5 Personen wird nicht aufgeteilt.',
   groupSizeHint:
     '3 bis 5. Unter 6 Personen wird nicht aufgeteilt — dann gibt es stattdessen Paare.',
   secondsLabel: 'Sekunden pro Frage',
@@ -111,7 +113,10 @@ export default {
   topicDisagree: 'alle dagegen',
   dissenterNote: 'alle außer {name}',
   skippedNote: '{n} haben nichts beantwortet und sind nicht eingeteilt.',
-  tooFewToGroup: 'Unter 6 Personen keine Gruppen — hier sind stattdessen die besten Paare.',
+  topPairsHeading: 'Passt am besten zu dir',
+  tooFewToGroup: 'Unter 5 Personen gibt es keine Gruppen.',
+  noPairs: 'Noch niemand zum Vergleichen da.',
+  noSharedAnswers: 'Ihr habt keine Frage gleich beantwortet.',
   pairSame: '{same} von {common} gleich',
   resultsHostHint: 'Schick alle los, sich mit ihrer Gruppe zu unterhalten.',
 
@@ -150,6 +155,7 @@ export default {
   rulesGroupingHeading: 'Wie die Gruppen entstehen',
   rulesGrouping1: 'Zwei Personen passen umso besser zusammen, je größer der Anteil gemeinsam beantworteter Fragen mit gleicher Antwort ist. Es gibt keine richtigen Antworten, also auch keine Punkte und nichts falsch zu machen.',
   rulesGrouping2: 'Fürs Ranking zählt, wie ungewöhnlich eine Antwort ist: Eine Frage, bei der neun von zehn dasselbe wählen, sagt kaum etwas aus — zwei Leute, die beide die seltene Seite wählen, dagegen schon.',
-  rulesGrouping3: 'Die Einteilung beginnt beim ähnlichsten Paar und nimmt dann jeweils die Person dazu, die am besten passt, bis die Gruppe voll ist. Alle landen in einer Gruppe, niemand bleibt übrig. Unter 6 Personen gibt es keine Gruppen, sondern die passendsten Paare.',
+  rulesGrouping3:
+    'Die Moderation legt nur fest, wie viele Gruppen es gibt; die Gruppengröße ergibt sich aus der tatsächlichen Teilnehmerzahl. Los geht es mit dem Paar mit der höchsten Übereinstimmung, dann kommt jeweils die Person dazu, die am besten passt, bis die Gruppe voll ist. Alle landen in einer Gruppe — niemand bleibt übrig. Unter 5 Personen gibt es keine Gruppen, sondern nur die Menschen, die am besten zu dir passen.',
   rulesBack: '← Zurück zum Spiel',
 };

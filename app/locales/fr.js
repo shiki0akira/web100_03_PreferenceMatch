@@ -50,7 +50,9 @@ export default {
   advancedSummary: 'Autres réglages',
   maxPlayersLabel: 'Nombre maximum',
   maxPlayersHint: 'De 2 à 30 personnes, animation non comprise',
-  groupSizeLabel: 'Personnes par groupe',
+  groupCountLabel: 'Combien de groupes',
+  groupCountHint:
+    'De 2 à 4. La taille des groupes se calcule selon le nombre de participants présents. En dessous de 5, pas de groupes.',
   groupSizeHint: '3 à 5. En dessous de 6 participants, pas de groupes : des binômes à la place.',
   secondsLabel: 'Secondes par question',
   secondsHint: '10 convient à la plupart des salons. 12 ou 15 pour des questions plus longues, 5 ou 8 pour aller vite.',
@@ -110,7 +112,10 @@ export default {
   topicDisagree: 'personne d’accord',
   dissenterNote: 'tout le monde sauf {name}',
   skippedNote: '{n} n’ont rien répondu et ne sont pas réparties.',
-  tooFewToGroup: 'Moins de 6 participants : voici plutôt les binômes les plus proches.',
+  topPairsHeading: 'Ceux qui vous ressemblent le plus',
+  tooFewToGroup: 'Moins de 5 participants : pas de groupes cette fois.',
+  noPairs: 'Personne à comparer pour le moment.',
+  noSharedAnswers: 'Vous n’avez répondu pareil à aucune question.',
   pairSame: '{same} sur {common} identiques',
   resultsHostHint: 'Envoyez chacun discuter avec son groupe.',
 
@@ -149,6 +154,7 @@ export default {
   rulesGroupingHeading: 'Comment les groupes sont calculés',
   rulesGrouping1: "L'affinité entre deux personnes, c'est la part de questions auxquelles elles ont répondu pareil, parmi celles auxquelles elles ont toutes deux répondu. Il n'y a pas de bonne réponse ici, donc ni score ni erreur.",
   rulesGrouping2: 'Pour le classement, les réponses sont pondérées selon leur rareté : une question où neuf personnes sur dix répondent pareil n’apprend presque rien, alors que deux personnes qui choisissent toutes deux le côté rare, si.',
-  rulesGrouping3: 'La répartition part du binôme le plus proche, puis ajoute à chaque fois la personne qui colle le mieux au groupe, jusqu’à le remplir. Tout le monde se retrouve dans un groupe, personne n’est laissé de côté. En dessous de 6 participants, pas de groupes : seulement les binômes les plus proches.',
+  rulesGrouping3:
+    'L’animateur choisit seulement le nombre de groupes ; leur taille se calcule selon le nombre de participants présents. On part du binôme le plus proche, puis on ajoute à chaque fois la personne qui colle le mieux au groupe, jusqu’à ce qu’il soit complet. Tout le monde se retrouve dans un groupe, personne n’est laissé de côté. En dessous de 5 participants, pas de groupes : seulement ceux qui vous ressemblent le plus.',
   rulesBack: '← Retour au jeu',
 };

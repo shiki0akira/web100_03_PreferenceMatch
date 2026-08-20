@@ -50,7 +50,9 @@ export default {
   advancedSummary: '기타 설정',
   maxPlayersLabel: '인원 제한',
   maxPlayersHint: '2~30명, 진행자 본인은 제외',
-  groupSizeLabel: '한 조 인원',
+  groupCountLabel: '조 개수',
+  groupCountHint:
+    '2~4개. 한 조 인원은 실제 참여 인원에 맞춰 나눕니다. 5명 미만이면 조를 나누지 않습니다.',
   groupSizeHint: '3~5명. 6명 미만이면 조를 나누지 않고 둘씩 궁합만 보여 줍니다.',
   secondsLabel: '문항당 초',
   secondsHint: '보통은 10초. 문항이 길면 12~15초, 빠르게 진행하려면 5~8초.',
@@ -110,7 +112,10 @@ export default {
   topicDisagree: '모두 비동의',
   dissenterNote: '{name} 님만 다름',
   skippedNote: '{n}명이 한 문항도 답하지 않아 조 편성에서 빠졌습니다.',
-  tooFewToGroup: '6명 미만이라 조를 나누지 않고, 가장 잘 맞는 둘씩 보여 줍니다.',
+  topPairsHeading: '나와 잘 맞는 사람',
+  tooFewToGroup: '5명 미만이라 조를 나누지 않습니다.',
+  noPairs: '아직 비교할 사람이 없습니다.',
+  noSharedAnswers: '답이 같은 문항이 없습니다.',
   pairSame: '{common}문항 중 {same}문항 같음',
   resultsHostHint: '각자 자기 조를 찾아가 이야기하도록 안내하세요.',
 
@@ -149,6 +154,7 @@ export default {
   rulesGroupingHeading: '조는 어떻게 나뉘나',
   rulesGrouping1: '두 사람의 궁합은 둘 다 답한 문항 중 답이 같은 비율입니다. 정답이 없는 문항이라 점수도 정오도 없습니다.',
   rulesGrouping2: '순위를 매길 때는 답의 희소성으로 가중치를 둡니다. 열에 아홉이 같은 쪽을 고르는 문항은 알려 주는 게 거의 없고, 둘 다 소수 쪽을 골랐을 때가 정말 비슷한 경우입니다.',
-  rulesGrouping3: '가장 잘 맞는 두 사람을 시작점으로, 그 조에 가장 잘 맞는 사람을 하나씩 채워 정원을 맞춥니다. 모두가 어느 한 조에 들어가므로 남는 사람이 없습니다. 6명 미만이면 조를 나누지 않고 가장 잘 맞는 둘씩 보여 줍니다.',
+  rulesGrouping3:
+    '진행자는 조를 몇 개로 나눌지만 고르고, 한 조 인원은 실제 참여 인원에 맞춰 나눕니다. 가장 잘 맞는 두 사람을 시작점으로 삼고, 거기에 가장 잘 맞는 사람을 하나씩 채웁니다. 모두가 어느 한 조에 들어가므로 남는 사람은 없습니다. 5명 미만이면 조를 나누지 않고 나와 잘 맞는 사람만 보여 줍니다.',
   rulesBack: '← 게임으로 돌아가기',
 };

@@ -111,7 +111,7 @@ async function main() {
   check('主持人在名單上有標記', host.state.players.filter((p) => p.host).length === 1);
 
   // 在大廳裡設定題目與其他選項——這是這一版跟搶答一致的流程
-  host.ws.send(JSON.stringify({ t: 'settings', questions: QUESTIONS, groupSize: 4, hostPlays: false }));
+  host.ws.send(JSON.stringify({ t: 'settings', questions: QUESTIONS, groupCount: 3, hostPlays: false }));
   await waitFor(host, (s) => s.questions && s.questions.length === QUESTIONS.length, '題目設定生效');
   check('題目在大廳設定成功', host.state.questionCount === QUESTIONS.length, `拿到 ${host.state.questionCount}`);
   check('主持人選擇不作答', host.state.hostPlays === false);
