@@ -116,6 +116,7 @@ export default {
   tooFewToGroup: '5人未満なのでグループ分けはしません。',
   noPairs: '比較できる相手がまだいません。',
   noSharedAnswers: '答えが同じだった質問はありません。',
+  pairPercent: '{percent}% 同じ',
   pairSame: '{common}問中 {same}問が同じ',
   resultsHostHint: 'グループごとに話しに行ってもらいましょう。',
 

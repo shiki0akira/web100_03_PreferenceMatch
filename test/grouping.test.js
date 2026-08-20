@@ -18,6 +18,7 @@ import {
   lookup,
   topPairsByPlayer,
   suggestedGroupCount,
+  minCommonAnswers,
 } from '../src/grouping.js';
 
 // 依序把答案字串（例如 'OOXX'）攤成 { q1: 'O', q2: 'O', q3: 'X', q4: 'X' }。
@@ -240,14 +241,41 @@ test('全組一致的題目不足時，補上只有一人不同的題目', () =>
   );
 });
 
-test('共同作答不到 2 題的組合不列進契合度榜', () => {
+test('共同作答不到一半題數的組合不列進契合度榜', () => {
   const answers = answersFrom({ a: 'O--', b: 'O--', c: 'OOX', d: 'OOX' });
   const ranking = affinityRanking(Object.keys(answers), answers);
 
-  // a、b 只有 q1 一題共同，不該出現
+  // 3 題的場次要至少 2 題共同；a、b 只有 q1 一題
   const pairs = ranking.map((row) => row.players.join('|'));
   assert.ok(!pairs.includes('a|b'), 'a|b 只有 1 題共同，不該上榜');
   assert.ok(pairs.includes('c|d'), 'c|d 有 3 題共同，應該上榜');
+});
+
+test('門檻是題數的一半，至少 2 題', () => {
+  assert.equal(minCommonAnswers(0), 2);
+  assert.equal(minCommonAnswers(3), 2);
+  assert.equal(minCommonAnswers(4), 2);
+  assert.equal(minCommonAnswers(10), 5);
+  assert.equal(minCommonAnswers(20), 10);
+});
+
+/*
+ * 只趕上兩三題的人不能因為「那兩題剛好一樣」就變成全場榜首。
+ * 固定門檻 2 題擋不住這件事，10 題的場次要 5 題共同才算數。
+ */
+test('只答了 2 題的人不會用 100% 霸榜', () => {
+  const answers = answersFrom({
+    a: 'OOOOOOOOOO',
+    b: 'OOOOOOOOXX', // 跟 a 共同 10 題、一樣 8 題
+    c: 'OOOOOXXXXX',
+    d: 'OO--------', // 只趕上 2 題，而且都跟 a 一樣 → 2/2 = 100%
+  });
+  const rows = topPairsByPlayer(Object.keys(answers), answers).a;
+  const others = rows.map((row) => row.players[1]);
+
+  assert.ok(!others.includes('d'), 'd 只有 2 題共同，不該出現在 a 的清單裡');
+  assert.equal(others[0], 'b', '榜首應該是真的答滿又最像的 b');
+  assert.equal(rows[0].percent, 80);
 });
 
 /*

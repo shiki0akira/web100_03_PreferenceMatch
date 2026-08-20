@@ -122,6 +122,7 @@ export default {
   tooFewToGroup: '人數不到 5 人，這場不分組。',
   noPairs: '還沒有可以比對的人。',
   noSharedAnswers: '你們沒有答案一樣的題目。',
+  pairPercent: '{percent}% 一樣',
   pairSame: '{same} / {common} 題一樣',
   resultsHostHint: '請大家照著分組去找組員聊天。',
 

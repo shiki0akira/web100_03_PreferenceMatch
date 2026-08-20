@@ -116,6 +116,7 @@ export default {
   tooFewToGroup: 'Moins de 5 participants : pas de groupes cette fois.',
   noPairs: 'Personne à comparer pour le moment.',
   noSharedAnswers: 'Vous n’avez répondu pareil à aucune question.',
+  pairPercent: '{percent}% en commun',
   pairSame: '{same} sur {common} identiques',
   resultsHostHint: 'Envoyez chacun discuter avec son groupe.',
 

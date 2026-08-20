@@ -116,6 +116,7 @@ export default {
   tooFewToGroup: 'Under 5 players, so no groups this round.',
   noPairs: 'Nobody to compare with yet.',
   noSharedAnswers: 'You did not answer any question the same way.',
+  pairPercent: '{percent}% the same',
   pairSame: '{same} of {common} the same',
   resultsHostHint: 'Send everyone off to talk to their group.',
 

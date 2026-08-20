@@ -117,6 +117,7 @@ export default {
   tooFewToGroup: 'Unter 5 Personen gibt es keine Gruppen.',
   noPairs: 'Noch niemand zum Vergleichen da.',
   noSharedAnswers: 'Ihr habt keine Frage gleich beantwortet.',
+  pairPercent: '{percent}% gleich',
   pairSame: '{same} von {common} gleich',
   resultsHostHint: 'Schick alle los, sich mit ihrer Gruppe zu unterhalten.',
 

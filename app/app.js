@@ -1058,9 +1058,14 @@
   }
 
   /*
-   * 每一列是一個可以展開的 <details>：收合時只有「誰 + 幾題一樣」，
-   * 展開才列出那幾題是什麼。不展開直接全列的話，三個人就是三十幾行，
+   * 每一列是一個可以展開的 <details>：收合時只有「誰 + 百分比」，
+   * 展開才列出題數與那幾題是什麼。不展開直接全列的話，三個人就是三十幾行，
    * 要捲很久才看得到自己最合的是誰——而那才是這張卡要回答的問題。
+   *
+   * 收合時給百分比而不是「8 / 10 題一樣」：漏答的題目不列入比對，所以每一列的
+   * 分母可能不一樣，直接排原始題數的話 6 / 8 會看起來輸給 8 / 10 之外的任何東西，
+   * 要心算才知道誰高。百分比跟排序用的是同一個比例，由上往下一定是遞減的。
+   * 原始題數沒有不見，它在展開的第一行。
    */
   function pairList(pairs) {
     var html = '';
@@ -1070,8 +1075,10 @@
       html +=
         '<li><details class="pair"><summary>' + CHEVRON +
         chips(row.players).replace(/<li /g, '<span ').replace(/<\/li>/g, '</span>') +
-        '<span class="score">' + escapeHtml(t('pairSame', { same: row.same, common: row.common })) +
+        '<span class="score">' + escapeHtml(t('pairPercent', { percent: row.percent })) +
         '</span></summary>' +
+        '<p class="pair-count">' +
+        escapeHtml(t('pairSame', { same: row.same, common: row.common })) + '</p>' +
         (shared.length
           ? '<ul class="topic-list">' + topicList(shared) + '</ul>'
           : '<p class="empty">' + escapeHtml(t('noSharedAnswers')) + '</p>') +

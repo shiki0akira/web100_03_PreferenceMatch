@@ -1351,6 +1351,15 @@ textarea.field {
   padding: 0 0.75rem 0.6rem;
 }
 
+/* 收合時看的是百分比，原始題數放在展開後的第一行 */
+.pair > .pair-count {
+  margin: 0;
+  padding: 0 0.75rem 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .pair-list .score {
   margin-left: auto;
   font-size: 0.85rem;

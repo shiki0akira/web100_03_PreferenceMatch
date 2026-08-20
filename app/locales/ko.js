@@ -116,6 +116,7 @@ export default {
   tooFewToGroup: '5명 미만이라 조를 나누지 않습니다.',
   noPairs: '아직 비교할 사람이 없습니다.',
   noSharedAnswers: '답이 같은 문항이 없습니다.',
+  pairPercent: '{percent}% 일치',
   pairSame: '{common}문항 중 {same}문항 같음',
   resultsHostHint: '각자 자기 조를 찾아가 이야기하도록 안내하세요.',
 

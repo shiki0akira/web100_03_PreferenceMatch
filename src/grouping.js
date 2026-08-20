@@ -20,8 +20,20 @@ export const MAX_GROUP_SIZE = 8;
 // 少於這個人數就不分組，只給兩兩契合度——5 個人才拆得出 3 + 2
 export const MIN_PLAYERS_TO_GROUP = 5;
 
-// 共同作答題數少於這個數字的組合不列進榜：1 題就 100% 只是誤導
+// 共同作答題數的絕對下限：1 題就 100% 只是誤導
 export const MIN_COMMON_ANSWERS = 2;
+
+/*
+ * 上榜需要的共同作答題數＝這一輪題數的一半（但至少 MIN_COMMON_ANSWERS 題）。
+ *
+ * 固定門檻擋不住真正的問題：10 題的場次裡，只趕上 2 題的人只要那 2 題剛好跟你一樣
+ * 就是 100%，會直接壓過答滿 10 題、跟你 8 題一樣的人——榜首變成全場最不熟的那個。
+ * 用比例當門檻，畫面上的數字就一直是排序用的那個數字，不必為了修正可信度
+ * 另外弄一套排序分數（那正是「顯示 A、排序 B」會讓人以為程式壞掉的老問題）。
+ */
+export function minCommonAnswers(questionCount) {
+  return Math.max(MIN_COMMON_ANSWERS, Math.ceil(questionCount / 2));
+}
 
 // 每個人在結果頁看得到幾個「跟你最合的人」
 export const TOP_PAIRS = 3;
@@ -97,9 +109,10 @@ function chanceCorrection(total) {
  * 因為每題的期望貢獻 = P(答案剛好一樣) × E[權重 | 一樣]
  *                    = (n_O² + n_X²) / T² × T² / (n_O² + n_X²) = 1
  *
- * 所以 1.0 ＝「跟路人甲一樣像」，2.0 ＝「像到隨機的兩倍」。分數只拿來排名與分組，
- * 畫面上給玩家看的是 same / common 的白話數字（「10 題裡你們有 7 題一樣」）——
- * 加權分數不好懂也不好解釋，不要顯示。
+ * 所以 1.0 ＝「跟路人甲一樣像」，2.0 ＝「像到隨機的兩倍」。**這個分數只拿來分組**，
+ * 契合度榜的排序與顯示都走 same / common 的白話比例：收合時是百分比，
+ * 展開後是「8 / 10 題一樣」。加權分數不好懂也不好解釋，不要顯示，
+ * 也不要拿來排一個顯示別的數字的榜。
  */
 export function pairAffinity(a, b, weights) {
   let matched = 0;
@@ -345,13 +358,14 @@ export function groupTopics(members, answers, minTopics = 3) {
  * 共同作答題數不到門檻的組合不列——1 題就 100% 只會讓人誤會。
  */
 export function affinityRanking(playerIds, answers, limit = TOP_PAIRS) {
-  const { ids, matrix } = affinityMatrix(playerIds, answers);
+  const { ids, weights, matrix } = affinityMatrix(playerIds, answers);
+  const required = minCommonAnswers(weights.size);
   const rows = [];
 
   for (let i = 0; i < ids.length; i += 1) {
     for (let j = i + 1; j < ids.length; j += 1) {
       const affinity = lookup(matrix, ids[i], ids[j]);
-      if (!affinity || affinity.common < MIN_COMMON_ANSWERS) continue;
+      if (!affinity || affinity.common < required) continue;
       rows.push({
         players: [ids[i], ids[j]],
         same: affinity.same,
@@ -374,7 +388,9 @@ export function affinityRanking(playerIds, answers, limit = TOP_PAIRS) {
  * 而每個人真正會看的只有 3 列。這裡先切好，只送出去 人數 × 3 列。
  */
 export function topPairsByPlayer(playerIds, answers, limit = TOP_PAIRS) {
-  const { ids, matrix } = affinityMatrix(playerIds, answers);
+  const { ids, weights, matrix } = affinityMatrix(playerIds, answers);
+  // weights 的 key 就是這一輪有人作答過的題目，拿它當題數不用另外把題目清單傳進來
+  const required = minCommonAnswers(weights.size);
   const out = {};
 
   for (const id of ids) {
@@ -382,7 +398,7 @@ export function topPairsByPlayer(playerIds, answers, limit = TOP_PAIRS) {
     for (const other of ids) {
       if (other === id) continue;
       const affinity = lookup(matrix, id, other);
-      if (!affinity || affinity.common < MIN_COMMON_ANSWERS) continue;
+      if (!affinity || affinity.common < required) continue;
       rows.push({
         // 第一個永遠是自己，客戶端不用再判斷哪一邊是「我」
         players: [id, other],

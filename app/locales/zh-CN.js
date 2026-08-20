@@ -116,6 +116,7 @@ export default {
   tooFewToGroup: '人数不到 5 人，这场不分组。',
   noPairs: '还没有可以比对的人。',
   noSharedAnswers: '你们没有答案一样的题目。',
+  pairPercent: '{percent}% 一样',
   pairSame: '{same} / {common} 题一样',
   resultsHostHint: '请大家照着分组去找组员聊天。',
 
